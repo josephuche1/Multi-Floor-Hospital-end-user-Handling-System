@@ -37,4 +37,5 @@ public abstract class HospitalEquipment {
 	
 	@Override
 	public abstract String toString();
+	// return "ID: " + this.id + "\n Name: "+this.name+"\n Position: "+this.position;
 }
