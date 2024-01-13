@@ -1,5 +1,5 @@
 
-public class HospitalStaff {
+public abstract  class HospitalStaff {
   private String id;
   private String name;
   private String position;
@@ -23,9 +23,6 @@ public class HospitalStaff {
 	  
   }
   public String getPosition() {
-	  
-  }
-  public void setPosition(String Position) {
 	  
   }
   
