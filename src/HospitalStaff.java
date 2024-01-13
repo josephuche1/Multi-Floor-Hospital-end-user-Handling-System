@@ -34,7 +34,5 @@ public abstract  class HospitalStaff {
   }
   
   @Override
-  public String toString() {
-	  return "ID: " + this.id + "\n Name: "+this.name+"\n Position: "+this.position;
-  }
+  public abstract String toString();
 }
