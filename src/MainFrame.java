@@ -280,6 +280,7 @@ public class MainFrame {
 		
 		
 		JPanel patientsListPanel = new JPanel(new GridLayout(0, 1, 10, 10));
+		patientsListPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
 		
 		for(int i = 0; i < 5; i++) {
 			JPanel patient = patientsPanel();
@@ -296,24 +297,30 @@ public class MainFrame {
     	String illness[] = {"illness 1", "illness 2", "illness 3"};
     	JPanel patient = new JPanel(new GridLayout(0, 3, 10, 10));
     	patient.setBorder(BorderFactory.createLineBorder(Color.RED, 2, true));
+    	patient.setBackground(Color.RED);
     	
     	JLabel patientName = new JLabel("Patient");
     	patientName.setHorizontalAlignment(JLabel.CENTER);
-    	patientName.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2, true));
+    	patientName.setFont(new Font("Arial", Font.BOLD, 15));
+    	patientName.setForeground(Color.WHITE);
+    	
     	JLabel patientRoom = new JLabel("100");
     	patientRoom.setHorizontalAlignment(JLabel.CENTER);
-    	patientRoom.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2, true));
+    	patientRoom.setFont(new Font("Arial", Font.BOLD, 15));
+    	patientRoom.setForeground(Color.WHITE);
+    	
     	patient.add(patientName);
     	patient.add(patientRoom);
     	
     	JPanel patientsIllness = new JPanel(new GridBagLayout());
-    	patientsIllness.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2, true));
+        patientsIllness.setBackground(Color.RED);
     	GridBagConstraints gbc1 = new GridBagConstraints();
     	gbc1.gridwidth = GridBagConstraints.REMAINDER;
     	gbc1.fill = GridBagConstraints.HORIZONTAL;
     	
     	for(int i = 0; i < 3; i++) {
     		JLabel illnessi = new JLabel(illness[i]);
+    		illnessi.setForeground(Color.WHITE);
     		patientsIllness.add(illnessi, gbc1);
     	}
     	
