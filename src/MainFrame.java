@@ -189,7 +189,11 @@ public class MainFrame {
 	    JPanel Staff = createStaffListPanel("Hospital");
 	    tabbedPane.addTab("Staff", Staff);
 		
+	    JPanel Equipments = createEquipmentListPanel("Hospital");
+	    tabbedPane.addTab("Equipment", Equipments);
 	    
+	    JPanel Rooms = createRoomListPanel("Hospital");
+	    tabbedPane.addTab("Rooms", Rooms);
 	    
 		return tabbedPane;
 	}
@@ -286,33 +290,34 @@ public class MainFrame {
     }
 	
     private JPanel createStaffListPanel(String hospitalName) {
-		JPanel staffPanel = new JPanel(new GridBagLayout());
-		GridBagConstraints gbcStaffPanel = new GridBagConstraints();
-		gbcStaffPanel.gridwidth = GridBagConstraints.REMAINDER;
-		gbcStaffPanel.fill = GridBagConstraints.BOTH;
-		gbcStaffPanel.weightx = 1.0;
-		gbcStaffPanel.weighty = 1.0;
-		staffPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10));
+		JPanel staffPanel = new JPanel(new BorderLayout());
 		
 		JPanel header = new JPanel();
-		header.setLayout(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
+		header.setLayout(new BorderLayout());
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		JLabel title = new JLabel(hospitalName+"'s Staff List");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
-		JPanel searchPanel = new JPanel(); 
+		JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); 
 		JTextField searchText = new JTextField(10);
 		JButton searchButton = new JButton("Search");
 		searchPanel.add(searchText);
 		searchPanel.add(searchButton);
 		
-		header.add(titlePanel, gbc);
-		header.add(searchPanel, gbc);
+		JPanel addNewStaff = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		JLabel textInfo = new JLabel("Add new Staff");
+		JButton addButton = new JButton("+");
+		addButton.addActionListener(e -> {
+			JDialog dialog = addNewStaffDialog();
+		});
+		addNewStaff.add(textInfo);
+		addNewStaff.add(addButton);
+		
+		header.add(titlePanel, BorderLayout.WEST);
+		header.add(searchPanel, BorderLayout.EAST);
+		header.add(addNewStaff, BorderLayout.CENTER);
 		header.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		JPanel staffListPanel = new JPanel(new BorderLayout(10,10));
@@ -322,8 +327,8 @@ public class MainFrame {
 		
 		
 		
-		staffPanel.add(header, gbcStaffPanel);
-		staffPanel.add(staffListPanel, gbcStaffPanel);
+		staffPanel.add(header, BorderLayout.NORTH);
+		staffPanel.add(staffListPanel, BorderLayout.CENTER);
 		return staffPanel;
     }
 
@@ -343,5 +348,212 @@ public class MainFrame {
     	
 	}
 	
+	private JDialog addNewStaffDialog() {
+		JDialog dialog = new JDialog(frame, "Add New Staff", true);
+		
+		JPanel form  = new JPanel(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.anchor = GridBagConstraints.WEST;
+		
+		JPanel StaffName = new JPanel();
+		StaffName.add(new JLabel("Name:"));
+		StaffName.add(new JTextField(10));
+		
+		JPanel staffPosition = new JPanel();
+		staffPosition.add(new JLabel("Position:"));
+		staffPosition.add(new JTextField(10));
+		
+		form.add(StaffName, gbc);
+		form.add(staffPosition, gbc);
+		form.add(new JButton("submit"));
+        dialog.add(form);
+        
+        dialog.setSize(300, 200);
+        dialog.setLocationRelativeTo(this.frame);
+        
+        dialog.setVisible(true);
+        
+        return dialog;
+	}
 	
+	private JPanel createEquipmentListPanel(String hospitalName) {
+		JPanel equipmentsPanel = new JPanel(new BorderLayout());
+		
+		JPanel header = new JPanel();
+		header.setLayout(new BorderLayout());
+		
+		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JLabel title = new JLabel(hospitalName+"'s Equipments List");
+		title.setFont(new Font("Arial", Font.BOLD, 20));
+		titlePanel.add(title);
+		
+		JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); 
+		JTextField searchText = new JTextField(10);
+		JButton searchButton = new JButton("Search");
+		searchPanel.add(searchText);
+		searchPanel.add(searchButton);
+		
+		JPanel addNewEquipment = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		JLabel textInfo = new JLabel("Add new Equipment");
+		JButton addButton = new JButton("+");
+		addButton.addActionListener(e -> {
+			JDialog dialog = addNewEquipmentDialog();
+		});
+		addNewEquipment.add(textInfo);
+		addNewEquipment.add(addButton);
+		
+		header.add(titlePanel, BorderLayout.WEST);
+		header.add(searchPanel, BorderLayout.EAST);
+		header.add(addNewEquipment, BorderLayout.CENTER);
+		header.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
+		JPanel equipmentListPanel = new JPanel(new BorderLayout(10,10));
+		equipmentListPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+		JScrollPane scrollPane = equipmentTable();
+		equipmentListPanel.add(scrollPane, BorderLayout.CENTER);
+		
+		
+		
+		equipmentsPanel.add(header, BorderLayout.NORTH);
+		equipmentsPanel.add(equipmentListPanel, BorderLayout.CENTER);
+		return equipmentsPanel;
+    }
+	
+	private JScrollPane equipmentTable() {
+    	String[] columnNames = {"ID", "Name", "Location"};
+    	
+    	DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+    	
+    	JTable equipmentTable = new JTable(model);
+    	
+    	for(int i = 0; i < 100; i++) {
+    		model.addRow(new Object[]{i, "item " + i, 123});
+    	}
+    	
+    	JScrollPane scrollPane = new JScrollPane(equipmentTable);
+    	return scrollPane;
+    	
+	}
+	
+	private JDialog addNewEquipmentDialog() {
+		JDialog dialog = new JDialog(frame, "Add New Staff", true);
+		
+		JPanel form  = new JPanel(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.anchor = GridBagConstraints.WEST;
+		
+		JPanel equipmentName = new JPanel();
+		equipmentName.add(new JLabel("Item Name:"));
+		equipmentName.add(new JTextField(10));
+		
+		JPanel equipmentlocation = new JPanel();
+		equipmentlocation.add(new JLabel("Item Location:"));
+		equipmentlocation.add(new JTextField(10));
+		
+		form.add(equipmentName, gbc);
+		form.add(equipmentlocation, gbc);
+		form.add(new JButton("submit"));
+        dialog.add(form);
+        
+        dialog.setSize(300, 200);
+        dialog.setLocationRelativeTo(this.frame);
+        
+        dialog.setVisible(true);
+        
+        return dialog;
+	}
+
+	private JPanel createRoomListPanel(String hospitalName) {
+		JPanel roomsPanel = new JPanel(new BorderLayout());
+		
+		JPanel header = new JPanel();
+		header.setLayout(new BorderLayout());
+		
+		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JLabel title = new JLabel(hospitalName+"'s Room List");
+		title.setFont(new Font("Arial", Font.BOLD, 20));
+		titlePanel.add(title);
+		
+		JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); 
+		JTextField searchText = new JTextField(10);
+		JButton searchButton = new JButton("Search");
+		searchPanel.add(searchText);
+		searchPanel.add(searchButton);
+		
+		JPanel addNewRoom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		JLabel textInfo = new JLabel("Add new Room");
+		JButton addButton = new JButton("+");
+		addButton.addActionListener(e -> {
+			JDialog dialog = addNewRoomDialog();
+		});
+		addNewRoom .add(textInfo);
+		addNewRoom .add(addButton);
+		
+		header.add(titlePanel, BorderLayout.WEST);
+		header.add(searchPanel, BorderLayout.EAST);
+		header.add(addNewRoom, BorderLayout.CENTER);
+		header.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
+		JPanel roomListPanel = new JPanel(new BorderLayout(10,10));
+		roomListPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+		JScrollPane scrollPane = roomTable();
+		roomListPanel.add(scrollPane, BorderLayout.CENTER);
+		
+		
+		
+		roomsPanel.add(header, BorderLayout.NORTH);
+		roomsPanel.add(roomListPanel, BorderLayout.CENTER);
+		return roomsPanel;
+    }
+	
+	private JScrollPane roomTable() {
+    	String[] columnNames = {"ID", "Room Number", "Floor Number", "Availability"};
+    	
+    	DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+    	
+    	JTable roomTable = new JTable(model);
+    	
+    	for(int i = 0; i < 100; i++) {
+    		model.addRow(new Object[]{i, "room " + i, 1, "is available"});
+    	}
+    	
+    	JScrollPane scrollPane = new JScrollPane(roomTable);
+    	return scrollPane;
+    	
+	}
+	
+	private JDialog addNewRoomDialog() {
+		JDialog dialog = new JDialog(frame, "Add New Room", true);
+		
+		JPanel form  = new JPanel(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.anchor = GridBagConstraints.WEST;
+		
+		JPanel roomNumber = new JPanel();
+		roomNumber.add(new JLabel("Room Number:"));
+		roomNumber.add(new JTextField(10));
+		
+		JPanel floorNumber = new JPanel();
+		floorNumber.add(new JLabel("Floor Number:"));
+		floorNumber.add(new JTextField(10));
+		
+		form.add(roomNumber, gbc);
+		form.add(floorNumber, gbc);
+		form.add(new JButton("submit"));
+        dialog.add(form);
+        
+        dialog.setSize(300, 200);
+        dialog.setLocationRelativeTo(this.frame);
+        
+        dialog.setVisible(true);
+        
+        return dialog;
+	}
+
 }
