@@ -1,16 +1,16 @@
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -187,7 +187,11 @@ public class MainFrame {
 		patients.addActionListener(new ActionListener () {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-                 
+                JPanel patientsPanel = addPatientsListsPanel("Hospital");
+                frame.add(patientsPanel);
+         		frame.revalidate();
+         		frame.repaint();
+         		System.out.println("Patients was clicked");
 			}
 		});
 		
@@ -245,6 +249,79 @@ public class MainFrame {
 		
 		return menuBar;
 	}
+	
+	private JPanel addPatientsListsPanel(String hospitalName) {
+		JPanel patientsPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints gbcPatientsPanel = new GridBagConstraints();
+		gbcPatientsPanel.gridwidth = GridBagConstraints.REMAINDER;
+		gbcPatientsPanel.fill = GridBagConstraints.HORIZONTAL;
+		gbcPatientsPanel.weightx = 1.0;
+	    patientsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10));
+		
+		JPanel header = new JPanel();
+		header.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		
+		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JLabel title = new JLabel(hospitalName+", Patients List");
+		title.setFont(new Font("Arial", Font.BOLD, 20));
+		titlePanel.add(title);
+		
+		JPanel searchPanel = new JPanel(); 
+		JTextField searchText = new JTextField(10);
+		JButton searchButton = new JButton("Serach");
+		searchPanel.add(searchText);
+		searchPanel.add(searchButton);
+		
+		header.add(titlePanel, gbc);
+		header.add(searchPanel, gbc);
+		
+		
+		JPanel patientsListPanel = new JPanel(new GridLayout(0, 1, 10, 10));
+		
+		for(int i = 0; i < 5; i++) {
+			JPanel patient = patientsPanel();
+			patientsListPanel.add(patient);
+		}
+		
+		
+		patientsPanel.add(header, gbcPatientsPanel);
+		patientsPanel.add(patientsListPanel, gbcPatientsPanel);
+		return patientsPanel;
+	}
+	
+    private JPanel patientsPanel() {
+    	String illness[] = {"illness 1", "illness 2", "illness 3"};
+    	JPanel patient = new JPanel(new GridLayout(0, 3, 10, 10));
+    	patient.setBorder(BorderFactory.createLineBorder(Color.RED, 2, true));
+    	
+    	JLabel patientName = new JLabel("Patient");
+    	patientName.setHorizontalAlignment(JLabel.CENTER);
+    	patientName.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2, true));
+    	JLabel patientRoom = new JLabel("100");
+    	patientRoom.setHorizontalAlignment(JLabel.CENTER);
+    	patientRoom.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2, true));
+    	patient.add(patientName);
+    	patient.add(patientRoom);
+    	
+    	JPanel patientsIllness = new JPanel(new GridBagLayout());
+    	patientsIllness.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2, true));
+    	GridBagConstraints gbc1 = new GridBagConstraints();
+    	gbc1.gridwidth = GridBagConstraints.REMAINDER;
+    	gbc1.fill = GridBagConstraints.HORIZONTAL;
+    	
+    	for(int i = 0; i < 3; i++) {
+    		JLabel illnessi = new JLabel(illness[i]);
+    		patientsIllness.add(illnessi, gbc1);
+    	}
+    	
+    	patient.add(patientsIllness);
+    	
+    	
+    	return patient;
+    }
 	
     
 }
