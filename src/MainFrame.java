@@ -1,13 +1,17 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -16,6 +20,8 @@ public class MainFrame {
 	private JFrame frame;
 	private JPanel createAccount;
 	private JPanel login;
+	private JPanel mainPanel;
+	private JMenuBar menuBar;
 	
 	
 	public MainFrame() {
@@ -34,8 +40,12 @@ public class MainFrame {
 //		this.createAccount  = this.createAccountForm();
 //		this.frame.add(createAccount);
 		
-		this.login  = this.loginForm();
-		this.frame.add(login);
+//		this.login  = this.loginForm();
+//		this.frame.add(login);
+		
+		this.menuBar = this.createMenuBar();
+		this.frame.setJMenuBar(menuBar);
+		
 		
 		this.frame.setVisible(true);
 	}
@@ -169,5 +179,72 @@ public class MainFrame {
 		
 	}
 	
+	private JMenuBar createMenuBar() {
+		JMenuBar menuBar = new JMenuBar();
+		
+		JButton patients = new JButton("Patients");
+		patients.setFont(new Font("Arial", Font.PLAIN, 15));
+		patients.addActionListener(new ActionListener () {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+                 
+			}
+		});
+		
+		JButton staff = new JButton("Staff");
+		staff.setFont(new Font("Arial", Font.PLAIN, 15));
+		staff.addActionListener(new ActionListener () {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+                 
+			}
+		});
+		
+		JButton rooms = new JButton("Rooms");
+		rooms.setFont(new Font("Arial", Font.PLAIN, 15));
+		rooms.addActionListener(new ActionListener () {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+                 
+			}
+		});
+		
+		JButton equipments = new JButton("Equipments");
+		equipments.setFont(new Font("Arial", Font.PLAIN, 15));
+		equipments.addActionListener(new ActionListener () {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+                 
+			}
+		});
+		
+		JButton pharmacy = new JButton("Pharmacy");
+		pharmacy.setFont(new Font("Arial", Font.PLAIN, 15));
+		pharmacy.addActionListener(new ActionListener () {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+                 
+			}
+		});
+		
+		JButton finances = new JButton("Finances");
+		finances.setFont(new Font("Arial", Font.PLAIN, 15));
+		finances.addActionListener(new ActionListener () {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+                 
+			}
+		});
+		
+		menuBar.add(patients);
+		menuBar.add(staff);
+		menuBar.add(equipments);
+		menuBar.add(rooms);
+		menuBar.add(finances);
+		menuBar.add(pharmacy);
+		
+		return menuBar;
+	}
 	
+    
 }
