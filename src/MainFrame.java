@@ -22,6 +22,7 @@ public class MainFrame {
 	private JPanel login;
 	private JPanel mainPanel;
 	private JMenuBar menuBar;
+	private JPanel activePanel;
 	
 	
 	public MainFrame() {
@@ -36,6 +37,8 @@ public class MainFrame {
 		this.frame.setSize(800, 500);
 		this.frame.setLocationRelativeTo(null);
 		this.frame.setResizable(false);
+		
+		this.activePanel = null; 
 		
 //		this.createAccount  = this.createAccountForm();
 //		this.frame.add(createAccount);
@@ -182,15 +185,14 @@ public class MainFrame {
 	private JMenuBar createMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
 		
+		
 		JButton patients = new JButton("Patients");
 		patients.setFont(new Font("Arial", Font.PLAIN, 15));
 		patients.addActionListener(new ActionListener () {
 			@Override
 			public void actionPerformed(ActionEvent e) {
                 JPanel patientsPanel = addPatientsListsPanel("Hospital");
-                frame.add(patientsPanel);
-         		frame.revalidate();
-         		frame.repaint();
+                switchPanels(activePanel, patientsPanel);
          		System.out.println("Patients was clicked");
 			}
 		});
@@ -200,7 +202,9 @@ public class MainFrame {
 		staff.addActionListener(new ActionListener () {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-                 
+                 JPanel staffPanel = addStaffListPanel("Hospital");
+                 switchPanels(activePanel, staffPanel);
+                 System.out.println("Staff was clicked");
 			}
 		});
 		
@@ -330,5 +334,81 @@ public class MainFrame {
     	return patient;
     }
 	
-    
+    private JPanel addStaffListPanel(String hospitalName) {
+		JPanel staffPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints gbcStaffPanel = new GridBagConstraints();
+		gbcStaffPanel.gridwidth = GridBagConstraints.REMAINDER;
+		gbcStaffPanel.fill = GridBagConstraints.HORIZONTAL;
+		gbcStaffPanel.weightx = 1.0;
+		staffPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10));
+		
+		JPanel header = new JPanel();
+		header.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		
+		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JLabel title = new JLabel(hospitalName+", Patients List");
+		title.setFont(new Font("Arial", Font.BOLD, 20));
+		titlePanel.add(title);
+		
+		JPanel searchPanel = new JPanel(); 
+		JTextField searchText = new JTextField(10);
+		JButton searchButton = new JButton("Search");
+		searchPanel.add(searchText);
+		searchPanel.add(searchButton);
+		
+		header.add(titlePanel, gbc);
+		header.add(searchPanel, gbc);
+		
+		
+		JPanel staffListPanel = new JPanel(new GridLayout(0, 1, 10, 10));
+		staffListPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+		
+		for(int i = 0; i < 5; i++) {
+			JPanel patient = staffPanel();
+			staffListPanel.add(patient);
+		}
+		
+		
+		staffPanel.add(header, gbcStaffPanel);
+		staffPanel.add(staffListPanel, gbcStaffPanel);
+		return staffPanel;
+    }
+
+	private JPanel staffPanel() {
+    	String illness[] = {"illness 1", "illness 2", "illness 3"};
+    	JPanel staff = new JPanel(new GridLayout(0, 2, 10, 10));
+    	staff.setBorder(BorderFactory.createLineBorder(Color.RED, 2, true));
+    	staff.setBackground(Color.CYAN);
+    	
+    	JLabel staffName = new JLabel("Patient");
+    	staffName.setHorizontalAlignment(JLabel.CENTER);
+    	staffName.setFont(new Font("Arial", Font.BOLD, 15));
+    	staffName.setForeground(Color.WHITE);
+    	
+    	JLabel staffPosition = new JLabel("100");
+    	staffPosition .setHorizontalAlignment(JLabel.CENTER);
+    	staffPosition .setFont(new Font("Arial", Font.BOLD, 15));
+    	staffPosition .setForeground(Color.WHITE);
+    	
+    	staff.add(staffName);
+    	staff.add(staffPosition);
+    	
+ 
+    	
+    	
+    	return staff;
+	}
+	
+	private void switchPanels(JPanel activePanel, JPanel newPanel) {
+		if(activePanel != null) {
+			frame.remove(activePanel);
+		}
+		frame.add(newPanel);
+		frame.revalidate();
+		frame.repaint();
+		this.activePanel = newPanel;
+	}
 }
