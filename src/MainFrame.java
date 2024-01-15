@@ -1,28 +1,29 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 public class MainFrame {
 	private JFrame frame;
 	private JPanel createAccount;
 	private JPanel login;
 	private JPanel mainPanel;
-	private JMenuBar menuBar;
-	private JPanel activePanel;
+	private JTabbedPane tabbedPane;
 	
 	
 	public MainFrame() {
@@ -38,16 +39,14 @@ public class MainFrame {
 		this.frame.setLocationRelativeTo(null);
 		this.frame.setResizable(false);
 		
-		this.activePanel = null; 
-		
 //		this.createAccount  = this.createAccountForm();
 //		this.frame.add(createAccount);
 		
 //		this.login  = this.loginForm();
 //		this.frame.add(login);
 		
-		this.menuBar = this.createMenuBar();
-		this.frame.setJMenuBar(menuBar);
+		this.tabbedPane = this.createTabbedPane();
+		this.frame.add(tabbedPane);
 		
 		
 		this.frame.setVisible(true);
@@ -182,84 +181,26 @@ public class MainFrame {
 		
 	}
 	
-	private JMenuBar createMenuBar() {
-		JMenuBar menuBar = new JMenuBar();
+	private JTabbedPane createTabbedPane() {
+		JTabbedPane tabbedPane = new JTabbedPane();
+		JPanel Patients = createPatientsListsPanel("Hospital");
+	    tabbedPane.addTab("Patients", Patients);
+	    
+	    JPanel Staff = createStaffListPanel("Hospital");
+	    tabbedPane.addTab("Staff", Staff);
 		
-		
-		JButton patients = new JButton("Patients");
-		patients.setFont(new Font("Arial", Font.PLAIN, 15));
-		patients.addActionListener(new ActionListener () {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-                JPanel patientsPanel = addPatientsListsPanel("Hospital");
-                switchPanels(activePanel, patientsPanel);
-         		System.out.println("Patients was clicked");
-			}
-		});
-		
-		JButton staff = new JButton("Staff");
-		staff.setFont(new Font("Arial", Font.PLAIN, 15));
-		staff.addActionListener(new ActionListener () {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-                 JPanel staffPanel = addStaffListPanel("Hospital");
-                 switchPanels(activePanel, staffPanel);
-                 System.out.println("Staff was clicked");
-			}
-		});
-		
-		JButton rooms = new JButton("Rooms");
-		rooms.setFont(new Font("Arial", Font.PLAIN, 15));
-		rooms.addActionListener(new ActionListener () {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-                 
-			}
-		});
-		
-		JButton equipments = new JButton("Equipments");
-		equipments.setFont(new Font("Arial", Font.PLAIN, 15));
-		equipments.addActionListener(new ActionListener () {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-                 
-			}
-		});
-		
-		JButton pharmacy = new JButton("Pharmacy");
-		pharmacy.setFont(new Font("Arial", Font.PLAIN, 15));
-		pharmacy.addActionListener(new ActionListener () {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-                 
-			}
-		});
-		
-		JButton finances = new JButton("Finances");
-		finances.setFont(new Font("Arial", Font.PLAIN, 15));
-		finances.addActionListener(new ActionListener () {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-                 
-			}
-		});
-		
-		menuBar.add(patients);
-		menuBar.add(staff);
-		menuBar.add(equipments);
-		menuBar.add(rooms);
-		menuBar.add(finances);
-		menuBar.add(pharmacy);
-		
-		return menuBar;
+	    
+	    
+		return tabbedPane;
 	}
 	
-	private JPanel addPatientsListsPanel(String hospitalName) {
+	private JPanel createPatientsListsPanel(String hospitalName) {
 		JPanel patientsPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints gbcPatientsPanel = new GridBagConstraints();
 		gbcPatientsPanel.gridwidth = GridBagConstraints.REMAINDER;
-		gbcPatientsPanel.fill = GridBagConstraints.HORIZONTAL;
+		gbcPatientsPanel.fill = GridBagConstraints.BOTH;
 		gbcPatientsPanel.weightx = 1.0;
+		gbcPatientsPanel.weighty = 1.0; 
 	    patientsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10));
 		
 		JPanel header = new JPanel();
@@ -269,7 +210,7 @@ public class MainFrame {
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel title = new JLabel(hospitalName+", Patients List");
+		JLabel title = new JLabel(hospitalName+"'s Patients List");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
@@ -283,13 +224,11 @@ public class MainFrame {
 		header.add(searchPanel, gbc);
 		
 		
-		JPanel patientsListPanel = new JPanel(new GridLayout(0, 1, 10, 10));
+		JPanel patientsListPanel = new JPanel(new BorderLayout(10, 10));
 		patientsListPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+		JScrollPane scrollPane = patientsTable();
+		patientsListPanel.add(scrollPane, BorderLayout.CENTER);
 		
-		for(int i = 0; i < 5; i++) {
-			JPanel patient = patientsPanel();
-			patientsListPanel.add(patient);
-		}
 		
 		
 		patientsPanel.add(header, gbcPatientsPanel);
@@ -297,44 +236,22 @@ public class MainFrame {
 		return patientsPanel;
 	}
 	
-    private JPanel patientsPanel() {
-    	String illness[] = {"illness 1", "illness 2", "illness 3"};
-    	JPanel patient = new JPanel(new GridLayout(0, 3, 10, 10));
-    	patient.setBorder(BorderFactory.createLineBorder(Color.RED, 2, true));
-    	patient.setBackground(Color.RED);
+    private JScrollPane patientsTable() {
+    	String[] columnNames = {"ID", "Name", "Room Number", "Illnesses"};
     	
-    	JLabel patientName = new JLabel("Patient");
-    	patientName.setHorizontalAlignment(JLabel.CENTER);
-    	patientName.setFont(new Font("Arial", Font.BOLD, 15));
-    	patientName.setForeground(Color.WHITE);
+    	DefaultTableModel model = new DefaultTableModel(columnNames, 0);
     	
-    	JLabel patientRoom = new JLabel("100");
-    	patientRoom.setHorizontalAlignment(JLabel.CENTER);
-    	patientRoom.setFont(new Font("Arial", Font.BOLD, 15));
-    	patientRoom.setForeground(Color.WHITE);
+    	JTable patientsTable = new JTable(model);
     	
-    	patient.add(patientName);
-    	patient.add(patientRoom);
-    	
-    	JPanel patientsIllness = new JPanel(new GridBagLayout());
-        patientsIllness.setBackground(Color.RED);
-    	GridBagConstraints gbc1 = new GridBagConstraints();
-    	gbc1.gridwidth = GridBagConstraints.REMAINDER;
-    	gbc1.fill = GridBagConstraints.HORIZONTAL;
-    	
-    	for(int i = 0; i < 3; i++) {
-    		JLabel illnessi = new JLabel(illness[i]);
-    		illnessi.setForeground(Color.WHITE);
-    		patientsIllness.add(illnessi, gbc1);
+    	for(int i = 0; i < 5; i++) {
+    		model.addRow(new Object[] {1, "Patient", 100, "someting is wrong"});
     	}
+    	JScrollPane scrollPane = new JScrollPane(patientsTable);
     	
-    	patient.add(patientsIllness);
-    	
-    	
-    	return patient;
+    	return scrollPane;
     }
 	
-    private JPanel addStaffListPanel(String hospitalName) {
+    private JPanel createStaffListPanel(String hospitalName) {
 		JPanel staffPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints gbcStaffPanel = new GridBagConstraints();
 		gbcStaffPanel.gridwidth = GridBagConstraints.REMAINDER;
@@ -349,7 +266,7 @@ public class MainFrame {
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel title = new JLabel(hospitalName+", Patients List");
+		JLabel title = new JLabel(hospitalName+"'s Staff List");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
@@ -379,16 +296,16 @@ public class MainFrame {
 
 	private JPanel staffPanel() {
     	String illness[] = {"illness 1", "illness 2", "illness 3"};
-    	JPanel staff = new JPanel(new GridLayout(0, 2, 10, 10));
-    	staff.setBorder(BorderFactory.createLineBorder(Color.RED, 2, true));
-    	staff.setBackground(Color.CYAN);
+    	JPanel staff = new JPanel(new GridLayout(0, 2, 50, 10));
+    	staff.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2, true));
+    	staff.setBackground(Color.DARK_GRAY);
     	
-    	JLabel staffName = new JLabel("Patient");
+    	JLabel staffName = new JLabel("Staff");
     	staffName.setHorizontalAlignment(JLabel.CENTER);
     	staffName.setFont(new Font("Arial", Font.BOLD, 15));
     	staffName.setForeground(Color.WHITE);
     	
-    	JLabel staffPosition = new JLabel("100");
+    	JLabel staffPosition = new JLabel("Doctor");
     	staffPosition .setHorizontalAlignment(JLabel.CENTER);
     	staffPosition .setFont(new Font("Arial", Font.BOLD, 15));
     	staffPosition .setForeground(Color.WHITE);
@@ -396,19 +313,7 @@ public class MainFrame {
     	staff.add(staffName);
     	staff.add(staffPosition);
     	
- 
-    	
-    	
     	return staff;
 	}
 	
-	private void switchPanels(JPanel activePanel, JPanel newPanel) {
-		if(activePanel != null) {
-			frame.remove(activePanel);
-		}
-		frame.add(newPanel);
-		frame.revalidate();
-		frame.repaint();
-		this.activePanel = newPanel;
-	}
 }
