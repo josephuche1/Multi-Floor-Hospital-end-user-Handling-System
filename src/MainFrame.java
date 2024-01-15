@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 public class MainFrame {
 	private JFrame frame;
 	private JPanel createAccount;
+	private JPanel login;
 	
 	
 	public MainFrame() {
@@ -30,8 +31,11 @@ public class MainFrame {
 		this.frame.setLocationRelativeTo(null);
 		this.frame.setResizable(false);
 		
-		this.createAccount  = this.createAccountForm();
-		this.frame.add(createAccount);
+//		this.createAccount  = this.createAccountForm();
+//		this.frame.add(createAccount);
+		
+		this.login  = this.loginForm();
+		this.frame.add(login);
 		
 		this.frame.setVisible(true);
 	}
@@ -99,10 +103,71 @@ public class MainFrame {
 		createAccount.add(hospitalNameField, gbc);
 		createAccount.add(hospitalPasswordField, gbc);
 		createAccount.add(hospitalConfirmPasswordField, gbc);
-		createAccount.add(submitOrLogin);
+		createAccount.add(submitOrLogin, gbc);
 		
 		
 		return createAccount;
 		
 	}
+	
+	private JPanel loginForm() {
+		JPanel login = new JPanel();
+		login.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.anchor = GridBagConstraints.WEST;
+		
+		JPanel titleSection = new JPanel();
+		titleSection.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+		JLabel title = new JLabel("Login");
+		title.setFont(new Font("Arial", Font.BOLD, 30));
+		titleSection.add(title);
+		
+		JPanel hospitalNameField = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		hospitalNameField.setToolTipText("Enter the name of your Hospital");
+		JLabel hospitalNameLabel = new JLabel("Hospital Name: ");
+		hospitalNameLabel.setFont(new Font("Arial", Font.PLAIN, 15));
+		JTextField hospitalNameTextField = new JTextField(20);
+		hospitalNameTextField.setFont(new Font("Arial", Font.PLAIN, 15));
+		hospitalNameField.add(hospitalNameLabel);
+		hospitalNameField.add(hospitalNameTextField);
+		
+		JPanel hospitalPasswordField = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		hospitalPasswordField.setToolTipText("Enter your password. Please make sure to not forget your password.");
+		JLabel hospitalPasswordLabel = new JLabel("Password: ");
+		hospitalPasswordLabel.setFont(new Font("Arial", Font.PLAIN, 15));
+		JPasswordField hospitalPassword_PasswordField = new JPasswordField(20);
+		hospitalPassword_PasswordField.setEchoChar('*');
+		hospitalPassword_PasswordField.setFont(new Font("Arial", Font.PLAIN, 15));
+		hospitalPasswordField.add(hospitalPasswordLabel);
+		hospitalPasswordField.add(hospitalPassword_PasswordField);
+		
+		JPanel submitOrSignUp = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		
+		JButton submit = new JButton("Submit");
+		submit.setFont(new Font("Arial", Font.BOLD, 15));
+		submit.setBackground(Color.BLUE);
+		submit.setForeground(Color.WHITE);
+		
+		JButton SignUp = new JButton("Create an account");
+		SignUp.setFont(new Font("Arial", Font.BOLD, 15));
+		SignUp.setBackground(Color.RED);
+		SignUp.setForeground(Color.WHITE);
+		
+		submitOrSignUp.add(submit);
+		submitOrSignUp.add(SignUp);
+		
+		
+		login.add(titleSection, gbc);
+		login.add(hospitalNameField, gbc);
+		login.add(hospitalPasswordField, gbc);
+		login.add(submitOrSignUp, gbc);
+		
+		
+		return login;
+		
+	}
+	
+	
 }
