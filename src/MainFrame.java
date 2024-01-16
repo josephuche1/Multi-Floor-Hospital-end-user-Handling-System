@@ -43,6 +43,7 @@ public class MainFrame {
 	private Hospital hospital;
 	private JTable patients;
 	private JTable rooms;
+	private JTable staff;
 	
 	public MainFrame() {
 		initialize();
@@ -456,6 +457,28 @@ public class MainFrame {
 		JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); 
 		JTextField searchText = new JTextField(10);
 		JButton searchButton = new JButton("Search");
+		searchButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String text = searchText.getText();
+				int id = 0;
+				try {
+				    id = Integer.parseInt(text);
+				} catch (NumberFormatException i) {
+				    System.out.println(text + " cannot be parsed to an int");
+				}
+				DefaultTableModel model = (DefaultTableModel) staff.getModel();
+				int columnIndex = 0;
+				
+				for (int i = 0; i < model.getRowCount(); i++) {
+				    if (model.getValueAt(i, columnIndex).equals(id)) {
+				    	staff.setRowSelectionInterval(i, i);
+				    	staff.scrollRectToVisible(staff.getCellRect(i, 0, true));
+				        break;
+				    }
+				}
+			}
+		});
 		searchPanel.add(searchText);
 		searchPanel.add(searchButton);
 		
@@ -491,9 +514,13 @@ public class MainFrame {
     	DefaultTableModel model = new DefaultTableModel(columnNames, 0);
     	
     	JTable staffTable = new JTable(model);
+    	staff = staffTable;
     	
-    	for(int i = 0; i < 100; i++) {
-    		model.addRow(new Object[]{i, "Staff " + i, "Doctor"});
+    	ArrayList<HospitalStaff> staffI = new ArrayList<HospitalStaff>();
+    	staffI.addAll(hospital != null ?  hospital.getStaff() : staffI);
+    	
+    	for(HospitalStaff staff : staffI) {
+    		model.addRow(new Object[]{Integer.parseInt(staff.getId()), staff.getName(), staff.getPosition()});
     	}
     	
     	JScrollPane scrollPane = new JScrollPane(staffTable);
@@ -632,6 +659,28 @@ public class MainFrame {
 		JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); 
 		JTextField searchText = new JTextField(10);
 		JButton searchButton = new JButton("Search");
+		searchButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String text = searchText.getText();
+				int id = 0;
+				try {
+				    id = Integer.parseInt(text);
+				} catch (NumberFormatException i) {
+				    System.out.println(text + " cannot be parsed to an int");
+				}
+				DefaultTableModel model = (DefaultTableModel) rooms.getModel();
+				int columnIndex = 0;
+				
+				for (int i = 0; i < model.getRowCount(); i++) {
+				    if (model.getValueAt(i, columnIndex).equals(id)) {
+				    	rooms.setRowSelectionInterval(i, i);
+				    	rooms.scrollRectToVisible(rooms.getCellRect(i, 0, true));
+				        break;
+				    }
+				}
+			}
+		});
 		searchPanel.add(searchText);
 		searchPanel.add(searchButton);
 		
