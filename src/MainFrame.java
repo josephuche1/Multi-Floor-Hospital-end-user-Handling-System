@@ -399,6 +399,12 @@ public class MainFrame {
 				hospital.addPatient(newPatient);
 				HospitalRoom room = hospital.assignPatient(newPatient);
 				newPatient.setRoomNumber(room.getRoomNumber());
+				
+				System.out.println(newPatient.getIllnesses());
+				
+				DefaultTableModel model = (DefaultTableModel) patients.getModel();
+				Object[] row = {Integer.parseInt(newPatient.getId()),newPatient.getName(), Integer.parseInt(newPatient.getRoomNumber()), newPatient.getIllnesses() };
+				model.addRow(row);
 				hospital.saveDetails();
 			}
 		});
@@ -425,7 +431,7 @@ public class MainFrame {
     	this.patients = patientsTable;
     	
     	ArrayList<Patient> patientsI = new ArrayList<Patient>();
-    	patientsI = hospital != null ?  hospital.getPatients() : patientsI;
+    	patientsI.addAll(hospital != null ?  hospital.getPatients() : patientsI);
     	
     	for(Patient patient : patientsI) {
     		model.addRow(new Object[] {Integer.parseInt(patient.getId()),patient.getName(), Integer.parseInt(patient.getRoomNumber()), patient.getIllnesses() });
@@ -664,7 +670,7 @@ public class MainFrame {
     	rooms = roomTable;
     	
     	ArrayList<HospitalRoom> roomsI = new ArrayList<HospitalRoom>();
-    	roomsI = hospital != null ?  hospital.getRooms() : roomsI;
+    	roomsI.addAll(hospital != null ?  hospital.getRooms() : roomsI);
     	int count = 0;
     	
     	for(HospitalRoom room : roomsI) {
@@ -770,6 +776,7 @@ public class MainFrame {
 				DefaultTableModel model = (DefaultTableModel) rooms.getModel();
 				Object[] row = {Integer.parseInt(newRoom.getRoomNumber()), Integer.parseInt(newRoom.getFloorNumber()), newRoom.getRoomType(), newRoom.getAvailability()};
 				model.addRow(row);
+				hospital.saveDetails();
 				dialog.setVisible(false);
 			}
 		});

@@ -1,4 +1,6 @@
-public class HospitalFinancial_Accounts {
+import java.io.Serializable;
+
+public class HospitalFinancial_Accounts implements Serializable{
     private double totalIncome;
     private double totalExpenses;
     public double balance;

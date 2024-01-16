@@ -18,6 +18,7 @@ public class Hospital implements Serializable{
   private ArrayList<Patient> patients;
   private ArrayList<HospitalStaff> staff;
   private ArrayList<HospitalRoom> rooms;
+  private ArrayList<Medicine> medicines;
   
   //Constructors
   public Hospital() {
@@ -25,6 +26,7 @@ public class Hospital implements Serializable{
 	  patients = new ArrayList<Patient>();
 	  staff = new ArrayList<HospitalStaff>();
 	  rooms = new ArrayList<HospitalRoom>();
+	  medicines = new ArrayList<Medicine>();
 	  
   }
   
@@ -34,6 +36,7 @@ public class Hospital implements Serializable{
 	  this.patients = new ArrayList<Patient>();
 	  this.staff = new ArrayList<HospitalStaff>();
 	  this.rooms = new ArrayList<HospitalRoom>();
+	  medicines = new ArrayList<Medicine>();
 	  this.saveDetails();
   }
   
@@ -43,6 +46,7 @@ public class Hospital implements Serializable{
 	  this.patients = new ArrayList<Patient>();
 	  this.staff = new ArrayList<HospitalStaff>();
 	  this.rooms = new ArrayList<HospitalRoom>();
+	  medicines = new ArrayList<Medicine>();
 	  
 	  int indexPatients = 0;
 	  
@@ -101,7 +105,8 @@ public class Hospital implements Serializable{
   
   public HospitalRoom assignPatient(Patient patient) {
 	  for(HospitalRoom room : this.rooms) {
-		  if(room.getAvailability()) {
+		  System.out.println(room.toString());
+		  if(room.getAvailability() && room.getRoomType().equals("General Ward")) {
 			  room.addPatient(patient);
 			  return room;
 		  }
@@ -116,6 +121,7 @@ public class Hospital implements Serializable{
   public ArrayList<HospitalRoom> getRooms(){
 	  return this.rooms;
   }
+  
   public ArrayList<HospitalStaff> getStaff(){
 	  return this.staff;
   }
@@ -209,7 +215,16 @@ public class Hospital implements Serializable{
   }
   
   @Override
-   public String toString() {
+  public String toString() {
 	  return "Name: " + this.name + ". \n Staff Population: " + this.staff.size()+". \n Number of rooms: " + this.rooms.size()+ "\n Number of patients: "+ this.patients.size();
   }
+  
+  public void addMedicine(Medicine medicine) {
+	  this.medicines.add(medicine);
+  }
+  
+  public ArrayList<Medicine> getMedicines(){
+	  return this.medicines;
+  }
+  
 }

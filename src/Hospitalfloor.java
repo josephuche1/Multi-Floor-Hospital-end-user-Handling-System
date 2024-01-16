@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class HospitalFloor {
+public class HospitalFloor implements Serializable{
    private String floorNumber;
    private ArrayList<HospitalRoom> rooms;
    

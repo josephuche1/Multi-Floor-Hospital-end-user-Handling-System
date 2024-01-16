@@ -1,6 +1,6 @@
-import java.util.ArrayList;
+import java.io.Serializable;
 
-public class Patient {
+public class Patient implements Serializable{
   private String id;
   private String name;
   private String illnesses;

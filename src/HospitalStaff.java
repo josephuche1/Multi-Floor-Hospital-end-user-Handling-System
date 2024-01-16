@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public abstract  class HospitalStaff {
+public abstract  class HospitalStaff implements Serializable{
   private String id;
   private String name;
   private String position;
