@@ -17,6 +17,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -24,6 +25,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
@@ -40,6 +42,7 @@ public class MainFrame {
 	private JPanel activePanel;
 	private Hospital hospital;
 	private JTable patients;
+	private JTable rooms;
 	
 	public MainFrame() {
 		initialize();
@@ -405,7 +408,7 @@ public class MainFrame {
 		form.add(submit, gbc);
         dialog.add(form);
         
-        dialog.setSize(500, 400);
+        dialog.setSize(300, 200);
         dialog.setLocationRelativeTo(this.frame);
         
         dialog.setVisible(true);
@@ -652,14 +655,20 @@ public class MainFrame {
     }
 	
 	private JScrollPane roomTable() {
-    	String[] columnNames = {"ID", "Room Number", "Floor Number", "Availability"};
+    	String[] columnNames = {"Room Number", "Floor Number", "Room Type", "Availability"};
     	
     	DefaultTableModel model = new DefaultTableModel(columnNames, 0);
     	
-    	JTable roomTable = new JTable(model);
     	
-    	for(int i = 0; i < 100; i++) {
-    		model.addRow(new Object[]{i, "room " + i, 1, "is available"});
+    	JTable roomTable = new JTable(model);
+    	rooms = roomTable;
+    	
+    	ArrayList<HospitalRoom> roomsI = new ArrayList<HospitalRoom>();
+    	roomsI = hospital != null ?  hospital.getRooms() : roomsI;
+    	int count = 0;
+    	
+    	for(HospitalRoom room : roomsI) {
+    		model.addRow(new Object[]{Integer.parseInt(room.getRoomNumber()), Integer.parseInt(room.getFloorNumber()), room.getRoomType(), room.getAvailability()});
     	}
     	
     	JScrollPane scrollPane = new JScrollPane(roomTable);
@@ -677,15 +686,100 @@ public class MainFrame {
 		
 		JPanel roomNumber = new JPanel();
 		roomNumber.add(new JLabel("Room Number:"));
-		roomNumber.add(new JTextField(10));
+		JTextField roomNumberField = new JTextField(10);
+		roomNumber.add(roomNumberField);
 		
 		JPanel floorNumber = new JPanel();
 		floorNumber.add(new JLabel("Floor Number:"));
-		floorNumber.add(new JTextField(10));
+		JTextField floorNumberField = new JTextField(10);
+		floorNumber.add(floorNumberField);
+		
+		JPanel isAvailable = new JPanel();
+		isAvailable.add(new JLabel("Is available:"));
+		JRadioButton radioButton1 = new JRadioButton("True");
+		JRadioButton radioButton2 = new JRadioButton("False");
+		ArrayList<JRadioButton> buttons = new ArrayList<JRadioButton>();
+		buttons.add(radioButton1);
+		buttons.add(radioButton2);
+		ButtonGroup group = new ButtonGroup();
+		group.add(radioButton1);
+		group.add(radioButton2);
+		isAvailable.add(radioButton1);
+		isAvailable.add(radioButton2);
+		
+		JPanel roomType = new JPanel();
+		roomType.add(new JLabel("Is available:"));
+		JRadioButton radioButton3 = new JRadioButton("General Ward");
+		JRadioButton radioButton4 = new JRadioButton("ICU");
+		ArrayList<JRadioButton> buttons2 = new ArrayList<JRadioButton>();
+		buttons2.add(radioButton3);
+		buttons2.add(radioButton4);
+		ButtonGroup group2 = new ButtonGroup();
+		group2.add(radioButton3);
+		group2.add(radioButton4);
+		roomType.add(radioButton3);
+		roomType.add(radioButton4);
+		
+		JButton submit = new JButton("Submit");
+		submit.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String roomNumber = roomNumberField.getText();
+				String floorNumber = floorNumberField.getText();
+				boolean available;
+				HospitalRoom newRoom;
+				
+				JRadioButton selectedButton = null;
+				for (JRadioButton button : buttons) {
+				    if (button.isSelected()) {
+				        selectedButton = button;
+				        break;
+				    }
+				}
+				if (selectedButton != null) {
+				    if(selectedButton.getText().equals(radioButton1.getText())) {
+				    	available = true;
+				    }
+				    else {
+				    	available = false;
+				    }
+				} else {
+				    available =true;
+				}
+				
+				JRadioButton selectedButton2 = null;
+				for (JRadioButton button : buttons2) {
+				    if (button.isSelected()) {
+				        selectedButton2 = button;
+				        break;
+				    }
+				}
+				if (selectedButton2 != null) {
+				    if(selectedButton2.getText().equals(radioButton3.getText())) {
+				    	newRoom = new GeneralWardRoom(roomNumber, floorNumber, available);
+				    }
+				    else {
+				    	newRoom = new ICURoom(roomNumber, floorNumber, available);
+				    }
+				} else {
+					newRoom = new GeneralWardRoom(roomNumber, floorNumber, available);
+				}
+				
+				hospital.addRoom(newRoom);
+				
+				DefaultTableModel model = (DefaultTableModel) rooms.getModel();
+				Object[] row = {Integer.parseInt(newRoom.getRoomNumber()), Integer.parseInt(newRoom.getFloorNumber()), newRoom.getRoomType(), newRoom.getAvailability()};
+				model.addRow(row);
+				dialog.setVisible(false);
+			}
+		});
+		
 		
 		form.add(roomNumber, gbc);
 		form.add(floorNumber, gbc);
-		form.add(new JButton("submit"), gbc);
+		form.add(isAvailable, gbc);
+		form.add(roomType, gbc);
+		form.add(submit, gbc);
         dialog.add(form);
         
         dialog.setSize(300, 200);

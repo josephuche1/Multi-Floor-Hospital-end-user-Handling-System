@@ -37,7 +37,7 @@ public class Patient {
 	  return this.roomNumber;
   }
   public void setRoomNumber(String roomNumber) {
-	  this.roomNumber = roomNumber;
+	  this.roomNumber = roomNumber; 
   }
   
   @Override

@@ -112,6 +112,14 @@ public class Hospital implements Serializable{
   public ArrayList<Patient> getPatients(){
 	  return this.patients;
   }
+  
+  public ArrayList<HospitalRoom> getRooms(){
+	  return this.rooms;
+  }
+  public ArrayList<HospitalStaff> getStaff(){
+	  return this.staff;
+  }
+  
   public void saveDetails() {
 	  try {
 		  FileOutputStream fileOut = new FileOutputStream("Hospital Management System.bak");

@@ -1,8 +1,8 @@
 import java.util.ArrayList;
 
 public class ICURoom extends HospitalRoom{
-	public ICURoom(String roomNumber, String roomType) {
-		super(roomNumber);
+	public ICURoom(String roomNumber, String floorNumber, boolean isAvailable) {
+		super(roomNumber, isAvailable, floorNumber);
 		this.roomType = "ICU";
 		
 	}
