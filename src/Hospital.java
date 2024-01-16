@@ -99,7 +99,20 @@ public class Hospital implements Serializable{
 	  this.password = password;
   }
   
-  private void saveDetails() {
+  public HospitalRoom assignPatient(Patient patient) {
+	  for(HospitalRoom room : this.rooms) {
+		  if(room.getAvailability()) {
+			  room.addPatient(patient);
+			  return room;
+		  }
+	  }
+	  return null;
+  }
+  
+  public ArrayList<Patient> getPatients(){
+	  return this.patients;
+  }
+  public void saveDetails() {
 	  try {
 		  FileOutputStream fileOut = new FileOutputStream("Hospital Management System.bak");
 		  ObjectOutputStream out = new ObjectOutputStream(fileOut);

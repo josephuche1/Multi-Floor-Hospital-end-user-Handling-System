@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 public abstract class HospitalRoom {
 	private String roomNumber;
+	private boolean isAvailable;
 	private ArrayList<HospitalEquipment> equipments;
 	private ArrayList<Patient> patients;
 	protected String roomType;
@@ -9,16 +10,19 @@ public abstract class HospitalRoom {
 	// Constructors
 	public  HospitalRoom() {
 		this.roomNumber = "";
+		this.isAvailable = true;
 		this.equipments = new ArrayList<HospitalEquipment>();
 		this.patients = new ArrayList<Patient>();
 	}
-	public HospitalRoom(String roomNumber) {
+	public HospitalRoom(String roomNumber, boolean isAvailable) {
 		this.roomNumber = roomNumber;
+		this.isAvailable = isAvailable;
 		this.equipments = new ArrayList<HospitalEquipment>();
 		this.patients = new ArrayList<Patient>();
 	}
-	public HospitalRoom(String roomNumber, ArrayList<HospitalEquipment> equipments, ArrayList<Patient> patients) {
+	public HospitalRoom(String roomNumber, ArrayList<HospitalEquipment> equipments, ArrayList<Patient> patients, boolean isAvailable) {
 		this.roomNumber = roomNumber;
+		this.isAvailable = isAvailable;
 		this.equipments = new ArrayList<HospitalEquipment>();
 		this.patients = new ArrayList<Patient>();
 		
@@ -34,6 +38,9 @@ public abstract class HospitalRoom {
 	//public instance methods
 	public String getRoomNumber() {
 		return this.roomNumber;
+	}
+	public boolean getAvailability() {
+		return this.isAvailable;
 	}
 	public ArrayList<HospitalEquipment> getEquipments(){
 		return equipments;

@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -37,7 +38,8 @@ public class MainFrame {
 	private JTabbedPane tabbedPane;
 	private boolean isFirstTime;
 	private JPanel activePanel;
-	public Hospital hospital;
+	private Hospital hospital;
+	private JTable patients;
 	
 	public MainFrame() {
 		initialize();
@@ -302,13 +304,37 @@ public class MainFrame {
 		
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel title = new JLabel(this.hospital != null? this.hospital.getName(): "" +"'s Patients List");
+		String hospitalName = this.hospital != null? this.hospital.getName(): " " ;
+		JLabel title = new JLabel(hospitalName+"'s Patients List");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
 		JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); 
 		JTextField searchText = new JTextField(10);
+		searchText.setToolTipText("Enter patient Id");
 		JButton searchButton = new JButton("Search");
+		searchButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String text = searchText.getText();
+				int id = 0;
+				try {
+				    id = Integer.parseInt(text);
+				} catch (NumberFormatException i) {
+				    System.out.println(text + " cannot be parsed to an int");
+				}
+				DefaultTableModel model = (DefaultTableModel) patients.getModel();
+				int columnIndex = 0;
+				
+				for (int i = 0; i < model.getRowCount(); i++) {
+				    if (model.getValueAt(i, columnIndex).equals(id)) {
+				    	patients.setRowSelectionInterval(i, i);
+				    	patients.scrollRectToVisible(patients.getCellRect(i, 0, true));
+				        break;
+				    }
+				}
+			}
+		});
 		searchPanel.add(searchText);
 		searchPanel.add(searchButton);
 		
@@ -349,18 +375,37 @@ public class MainFrame {
 		
 		JPanel patientsName = new JPanel();
 		patientsName.add(new JLabel("Patient's Name:"));
-		patientsName.add(new JTextField(10));
+		JTextField patientsNameField = new JTextField(10);
+		patientsName.add(patientsNameField);
 		
 		JPanel patientsIllness = new JPanel();
 		patientsIllness.add(new JLabel("Patient's Illness(es):"));
-		patientsIllness.add(new JTextField(10));
+		JTextField patientsIllnessField = new JTextField(10);
+		patientsIllness.add(patientsIllnessField);
+		
+		JButton submit = new JButton("submit");
+		submit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String name = patientsNameField.getText();
+				String illnesses = patientsIllnessField.getText();
+				
+				int id = hospital.getNumberOfPatients();
+				Patient newPatient = new Patient(Integer.toString(id), name, illnesses);
+				
+				hospital.addPatient(newPatient);
+				HospitalRoom room = hospital.assignPatient(newPatient);
+				newPatient.setRoomNumber(room.getRoomNumber());
+				hospital.saveDetails();
+			}
+		});
 		
 		form.add(patientsName, gbc);
 		form.add(patientsIllness, gbc);
-		form.add(new JButton("submit"), gbc);
+		form.add(submit, gbc);
         dialog.add(form);
         
-        dialog.setSize(300, 200);
+        dialog.setSize(500, 400);
         dialog.setLocationRelativeTo(this.frame);
         
         dialog.setVisible(true);
@@ -374,9 +419,13 @@ public class MainFrame {
     	DefaultTableModel model = new DefaultTableModel(columnNames, 0);
     	
     	JTable patientsTable = new JTable(model);
+    	this.patients = patientsTable;
     	
-    	for(int i = 0; i < 100; i++) {
-    		model.addRow(new Object[] {i, "Patient" + i, 100, "someting is wrong"});
+    	ArrayList<Patient> patientsI = new ArrayList<Patient>();
+    	patientsI = hospital != null ?  hospital.getPatients() : patientsI;
+    	
+    	for(Patient patient : patientsI) {
+    		model.addRow(new Object[] {Integer.parseInt(patient.getId()),patient.getName(), Integer.parseInt(patient.getRoomNumber()), patient.getIllnesses() });
     	}
     	JScrollPane scrollPane = new JScrollPane(patientsTable);
     	
