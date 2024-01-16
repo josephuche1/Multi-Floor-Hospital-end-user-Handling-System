@@ -34,6 +34,7 @@ public class Hospital implements Serializable{
 	  this.patients = new ArrayList<Patient>();
 	  this.staff = new ArrayList<HospitalStaff>();
 	  this.rooms = new ArrayList<HospitalRoom>();
+	  this.saveDetails();
   }
   
   public Hospital(String name, String password, ArrayList<Patient> patients, ArrayList<HospitalStaff> staff, ArrayList<HospitalRoom> rooms) {
@@ -86,7 +87,7 @@ public class Hospital implements Serializable{
 	  return this.staff.size();
   }
   
-  public void saveDetails() {
+  private void saveDetails() {
 	  try {
 		  FileOutputStream fileOut = new FileOutputStream("Hospital Management System.bak");
 		  ObjectOutputStream out = new ObjectOutputStream(fileOut);

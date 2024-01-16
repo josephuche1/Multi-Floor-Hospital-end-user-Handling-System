@@ -34,6 +34,7 @@ public class MainFrame {
 	private JTabbedPane tabbedPane;
 	private boolean isFirstTime;
 	private JPanel activePanel;
+	public Hospital hospital;
 	
 	public MainFrame() {
 		initialize();
@@ -49,14 +50,13 @@ public class MainFrame {
 		this.frame.setResizable(false);
 		
 		this.createAccount  = this.createAccountForm();
-		
+		this.tabbedPane = this.createTabbedPane();
 		
 		this.login  = this.loginForm();
 		this.frame.add(login);
 		this.activePanel = this.login;
 		
-//		this.tabbedPane = this.createTabbedPane();
-//		this.frame.add(tabbedPane);
+		
 		
 		
 		this.frame.setVisible(true);
@@ -64,6 +64,10 @@ public class MainFrame {
 	
 	private JPanel createAccountForm() {
 		JPanel createAccount;
+		
+		JLabel info = new JLabel("");
+		info.setForeground(Color.RED);
+		
 		createAccount = new JPanel();
 		createAccount.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -112,6 +116,29 @@ public class MainFrame {
 		submit.setFont(new Font("Arial", Font.BOLD, 15));
 		submit.setBackground(Color.BLUE);
 		submit.setForeground(Color.WHITE);
+		submit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String hospitalName = hospitalNameTextField.getText();
+				char[] pf = hospitalPassword_PasswordField.getPassword();
+				String password = new String(pf);
+				char[] cpf = hospitalConfirmPassword_PasswordField.getPassword();
+				String confirmPassword = new String(cpf);
+				System.out.println("Password: " + password);
+				System.out.println("Confirm Password: " + confirmPassword);
+				
+				if(password.equals(confirmPassword)) {
+					hospital = new Hospital(hospitalName, password);
+					frame.remove(activePanel);
+					frame.add(tabbedPane);
+					frame.revalidate();
+					frame.repaint();
+				} else {
+					info.setText("Passwords don't match");
+				}
+				
+			}
+		});
 		
 		JButton backToLogin = new JButton("Back to login");
 		backToLogin.setFont(new Font("Arial", Font.BOLD, 15));
@@ -127,11 +154,15 @@ public class MainFrame {
 		submitOrLogin.add(submit);
 		submitOrLogin.add(backToLogin);
 		
+		
+		
+		
 		createAccount.add(titleSection, gbc);
 		createAccount.add(hospitalNameField, gbc);
 		createAccount.add(hospitalPasswordField, gbc);
 		createAccount.add(hospitalConfirmPasswordField, gbc);
 		createAccount.add(submitOrLogin, gbc);
+		createAccount.add(info, gbc);
 		
 		
 		return createAccount;
