@@ -4,9 +4,16 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,6 +32,7 @@ public class MainFrame {
 	private JPanel login;
 	private JPanel mainPanel;
 	private JTabbedPane tabbedPane;
+	private boolean isFirstTime;
 	
 	
 	public MainFrame() {
@@ -204,6 +212,9 @@ public class MainFrame {
 	    
 	    JPanel Floors = createFloorListPanel("Hospital");
 	    tabbedPane.addTab("Floor", Floors);
+	    
+	    JPanel Settings = createSettingsPanel("Hospital");
+	    tabbedPane.addTab("Settings", Settings);
 	    
 		return tabbedPane;
 	}
@@ -841,5 +852,121 @@ public class MainFrame {
         
         return dialog;
 	}
+	
+	private JDialog saveHospital() {
+		JDialog dialog = new JDialog(frame, "Save Hospital", true);
+		
+		JPanel form  = new JPanel(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.anchor = GridBagConstraints.WEST;
+		
+		JPanel filename1 = new JPanel();
+		filename1.add(new JLabel("Filename:"));
+		filename1.add(new JTextField(10));
+		
+		form.add(filename1, gbc);
+		form.add(new JButton("submit"), gbc);
+        dialog.add(form);
+        
+        dialog.setSize(300, 200);
+        dialog.setLocationRelativeTo(this.frame);
+        
+        dialog.setVisible(true);
+        
+        return dialog;
+	}
+    
+	private JPanel createSettingsPanel(String hospitalName) {
+		JPanel settingPanel = new JPanel(new BorderLayout());
+		
+		JPanel header = new JPanel();
+		header.setLayout(new BorderLayout());
+		
+		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JLabel title = new JLabel("Settings");
+		title.setFont(new Font("Arial", Font.BOLD, 20));
+		titlePanel.add(title);
+		
+		
+		
+		header.add(titlePanel, BorderLayout.WEST);
+		header.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
+		JPanel settingsPanel = new JPanel(new BorderLayout(10,10));
+		settingsPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        JCheckBox checkbox = new JCheckBox("Save to backup file");
+        checkbox.setBounds(50, 50, 200, 50);
+        checkbox.setSelected(loadCheckboxState());
+        isFirstTime = loadIsFirstTime();
 
+        // Add an ActionListener to the checkbox
+        checkbox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Save the state of the checkbox to a file
+                saveCheckboxState(checkbox.isSelected());
+                saveIsFirstTime(isFirstTime);
+                
+                if (checkbox.isSelected() && isFirstTime) {
+                    saveHospital();
+                    isFirstTime = false;
+                }
+            }
+        });
+        settingsPanel.add(checkbox, BorderLayout.NORTH);
+		
+		settingPanel.add(header, BorderLayout.NORTH);
+		settingPanel.add(settingsPanel, BorderLayout.CENTER);
+		return settingPanel;
+    }
+	
+    public boolean loadCheckboxState() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("checkbox_state.txt"));
+            String state = reader.readLine();
+            reader.close();
+
+            return state.equals("true");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public void saveCheckboxState(boolean state) {
+        try {
+            PrintWriter writer = new PrintWriter("checkbox_state.txt", "UTF-8");
+            writer.println(state);
+            writer.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+	
+    public static boolean loadIsFirstTime() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("isfirsttime_state.txt"));
+            String state = reader.readLine();
+            reader.close();
+
+            return state.equals("true");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
+    public static void saveIsFirstTime(boolean state) {
+        try {
+            PrintWriter writer = new PrintWriter("isfirsttime_state.txt", "UTF-8");
+            writer.println(state);
+            writer.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    
 }
