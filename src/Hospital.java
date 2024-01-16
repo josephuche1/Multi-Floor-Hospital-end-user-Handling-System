@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
-public class Hospital  extends MainFrame implements Serializable{
+public class Hospital implements Serializable{
   private String name;
   private String password;
   private String filename;
@@ -84,6 +84,37 @@ public class Hospital  extends MainFrame implements Serializable{
   }
   public int getNumberOfStaffMembers() {
 	  return this.staff.size();
+  }
+  
+  public void saveDetails() {
+	  try {
+		  FileOutputStream fileOut = new FileOutputStream("Hospital Management System.bak");
+		  ObjectOutputStream out = new ObjectOutputStream(fileOut);
+		  out.writeObject(this);
+		  out.close();
+		  fileOut.close();
+	  } catch(IOException e) {
+		  e.printStackTrace();
+	  }
+  }
+  
+  public void loadDetails(Hospital hospital) {
+	  try {
+		FileInputStream fileIn = new FileInputStream("Hospital Management System.bak");
+		ObjectInputStream in  = new ObjectInputStream(fileIn);
+		hospital = (Hospital) in.readObject();
+		fileIn.close();
+	} catch (FileNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (ClassNotFoundException e) {
+		// TODO Auto-generated catch block
+		System.out.println("User class not found");
+		e.printStackTrace();
+	}
   }
   
   public void saveHospital() {

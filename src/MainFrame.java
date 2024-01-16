@@ -33,7 +33,7 @@ public class MainFrame {
 	private JPanel mainPanel;
 	private JTabbedPane tabbedPane;
 	private boolean isFirstTime;
-	
+	private JPanel activePanel;
 	
 	public MainFrame() {
 		initialize();
@@ -48,14 +48,15 @@ public class MainFrame {
 		this.frame.setLocationRelativeTo(null);
 		this.frame.setResizable(false);
 		
-//		this.createAccount  = this.createAccountForm();
-//		this.frame.add(createAccount);
+		this.createAccount  = this.createAccountForm();
 		
-//		this.login  = this.loginForm();
-//		this.frame.add(login);
 		
-		this.tabbedPane = this.createTabbedPane();
-		this.frame.add(tabbedPane);
+		this.login  = this.loginForm();
+		this.frame.add(login);
+		this.activePanel = this.login;
+		
+//		this.tabbedPane = this.createTabbedPane();
+//		this.frame.add(tabbedPane);
 		
 		
 		this.frame.setVisible(true);
@@ -109,16 +110,22 @@ public class MainFrame {
 		
 		JButton submit = new JButton("Submit");
 		submit.setFont(new Font("Arial", Font.BOLD, 15));
-		submit.setBackground(Color.GREEN);
+		submit.setBackground(Color.BLUE);
 		submit.setForeground(Color.WHITE);
 		
 		JButton backToLogin = new JButton("Back to login");
 		backToLogin.setFont(new Font("Arial", Font.BOLD, 15));
-		backToLogin.setBackground(Color.RED);
+		backToLogin.setBackground(Color.GRAY);
 		backToLogin.setForeground(Color.WHITE);
+		backToLogin.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(activePanel, login);
+			}
+		});
 		
-		submitOrLogin.add(backToLogin);
 		submitOrLogin.add(submit);
+		submitOrLogin.add(backToLogin);
 		
 		createAccount.add(titleSection, gbc);
 		createAccount.add(hospitalNameField, gbc);
@@ -173,8 +180,14 @@ public class MainFrame {
 		
 		JButton SignUp = new JButton("Create an account");
 		SignUp.setFont(new Font("Arial", Font.BOLD, 15));
-		SignUp.setBackground(Color.RED);
+		SignUp.setBackground(Color.GRAY);
 		SignUp.setForeground(Color.WHITE);
+		SignUp.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(activePanel, createAccount);
+			}
+		});
 		
 		submitOrSignUp.add(submit);
 		submitOrSignUp.add(SignUp);
@@ -189,6 +202,7 @@ public class MainFrame {
 		return login;
 		
 	}
+	
 	
 	private JTabbedPane createTabbedPane() {
 		JTabbedPane tabbedPane = new JTabbedPane();
@@ -218,6 +232,7 @@ public class MainFrame {
 	    
 		return tabbedPane;
 	}
+	
 	
 	private JPanel createPatientsListsPanel(String hospitalName) {
 		JPanel patientsPanel = new JPanel(new BorderLayout(10, 10));
@@ -969,4 +984,14 @@ public class MainFrame {
     }
     
     
+    public void switchPanels(JPanel currentPanel, JPanel newPanel) {
+    	if(currentPanel != null) {
+    		frame.remove(currentPanel);
+    	}
+    	
+    	frame.add(newPanel);
+    	frame.revalidate();
+    	frame.repaint();
+    	this.activePanel = newPanel;
+    }
 }
