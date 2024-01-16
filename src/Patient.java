@@ -20,7 +20,7 @@ public class Patient implements Serializable{
   public Patient(String id, String name, String illness) {
 	  this.id  = id;
 	  this.name =name;
-	  this.illnesses = "";
+	  this.illnesses = illness;
   }
   
   // Public instance methods

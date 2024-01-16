@@ -406,6 +406,7 @@ public class MainFrame {
 				Object[] row = {Integer.parseInt(newPatient.getId()),newPatient.getName(), Integer.parseInt(newPatient.getRoomNumber()), newPatient.getIllnesses() };
 				model.addRow(row);
 				hospital.saveDetails();
+				form.setVisible(false);
 			}
 		});
 		

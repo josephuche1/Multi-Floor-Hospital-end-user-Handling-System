@@ -105,7 +105,6 @@ public class Hospital implements Serializable{
   
   public HospitalRoom assignPatient(Patient patient) {
 	  for(HospitalRoom room : this.rooms) {
-		  System.out.println(room.toString());
 		  if(room.getAvailability() && room.getRoomType().equals("General Ward")) {
 			  room.addPatient(patient);
 			  return room;
