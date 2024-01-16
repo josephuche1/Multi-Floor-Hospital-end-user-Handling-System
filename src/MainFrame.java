@@ -15,6 +15,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
@@ -195,6 +196,15 @@ public class MainFrame {
 	    JPanel Rooms = createRoomListPanel("Hospital");
 	    tabbedPane.addTab("Rooms", Rooms);
 	    
+	    JPanel Pharmacy = createMedicineListPanel("Hospital");
+	    tabbedPane.addTab("Pharmacy", Pharmacy);
+	    
+	    JPanel Finance = createFinancePanel("Hospital");
+	    tabbedPane.addTab("Finance", Finance);
+	    
+	    JPanel Floors = createFloorListPanel("Hospital");
+	    tabbedPane.addTab("Floor", Floors);
+	    
 		return tabbedPane;
 	}
 	
@@ -250,7 +260,6 @@ public class MainFrame {
 		JPanel form  = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.anchor = GridBagConstraints.WEST;
 		
 		JPanel patientsName = new JPanel();
@@ -263,7 +272,7 @@ public class MainFrame {
 		
 		form.add(patientsName, gbc);
 		form.add(patientsIllness, gbc);
-		form.add(new JButton("submit"));
+		form.add(new JButton("submit"), gbc);
         dialog.add(form);
         
         dialog.setSize(300, 200);
@@ -354,7 +363,6 @@ public class MainFrame {
 		JPanel form  = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.anchor = GridBagConstraints.WEST;
 		
 		JPanel StaffName = new JPanel();
@@ -367,7 +375,7 @@ public class MainFrame {
 		
 		form.add(StaffName, gbc);
 		form.add(staffPosition, gbc);
-		form.add(new JButton("submit"));
+		form.add(new JButton("submit"), gbc);
         dialog.add(form);
         
         dialog.setSize(300, 200);
@@ -443,7 +451,6 @@ public class MainFrame {
 		JPanel form  = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.anchor = GridBagConstraints.WEST;
 		
 		JPanel equipmentName = new JPanel();
@@ -456,7 +463,7 @@ public class MainFrame {
 		
 		form.add(equipmentName, gbc);
 		form.add(equipmentlocation, gbc);
-		form.add(new JButton("submit"));
+		form.add(new JButton("submit"), gbc);
         dialog.add(form);
         
         dialog.setSize(300, 200);
@@ -532,7 +539,6 @@ public class MainFrame {
 		JPanel form  = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.anchor = GridBagConstraints.WEST;
 		
 		JPanel roomNumber = new JPanel();
@@ -545,7 +551,287 @@ public class MainFrame {
 		
 		form.add(roomNumber, gbc);
 		form.add(floorNumber, gbc);
-		form.add(new JButton("submit"));
+		form.add(new JButton("submit"), gbc);
+        dialog.add(form);
+        
+        dialog.setSize(300, 200);
+        dialog.setLocationRelativeTo(this.frame);
+        
+        dialog.setVisible(true);
+        
+        return dialog;
+	}
+	
+	private JPanel createMedicineListPanel(String hospitalName) {
+		JPanel medicinesPanel = new JPanel(new BorderLayout());
+		
+		JPanel header = new JPanel();
+		header.setLayout(new BorderLayout());
+		
+		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JLabel title = new JLabel(hospitalName+" Pharmacy's Medicine List");
+		title.setFont(new Font("Arial", Font.BOLD, 20));
+		titlePanel.add(title);
+		
+		JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); 
+		JTextField searchText = new JTextField(10);
+		JButton searchButton = new JButton("Search");
+		searchPanel.add(searchText);
+		searchPanel.add(searchButton);
+		
+		JPanel addNewMedicine = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		JLabel textInfo = new JLabel("Add new Medicine");
+		JButton addButton = new JButton("+");
+		addButton.addActionListener(e -> {
+			JDialog dialog = addNewMedicineDialog();
+		});
+		addNewMedicine .add(textInfo);
+		addNewMedicine .add(addButton);
+		
+		header.add(titlePanel, BorderLayout.WEST);
+		header.add(searchPanel, BorderLayout.EAST);
+		header.add(addNewMedicine, BorderLayout.CENTER);
+		header.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
+		JPanel medicineListPanel = new JPanel(new BorderLayout(10,10));
+		medicineListPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+		JScrollPane scrollPane = medicineTable();
+		medicineListPanel.add(scrollPane, BorderLayout.CENTER);
+		
+		
+		
+		medicinesPanel.add(header, BorderLayout.NORTH);
+		medicinesPanel.add(medicineListPanel, BorderLayout.CENTER);
+		return medicinesPanel;
+    }
+	
+	private JScrollPane medicineTable() {
+    	String[] columnNames = {"ID", "Name", "Description", "Price"};
+    	
+    	DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+    	
+    	JTable medicineTable = new JTable(model);
+    	
+    	for(int i = 0; i < 100; i++) {
+    		model.addRow(new Object[]{i, "medicine " + i, "dexcribe it", 1000});
+    	}
+    	
+    	JScrollPane scrollPane = new JScrollPane(medicineTable);
+    	return scrollPane;
+    	
+	}
+	
+	private JDialog addNewMedicineDialog() {
+		JDialog dialog = new JDialog(frame, "Add New Medicine", true);
+		
+		JPanel form  = new JPanel(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.anchor = GridBagConstraints.WEST;
+		
+		JPanel MedicineName = new JPanel();
+		MedicineName.add(new JLabel("Medicine Name:"));
+		MedicineName.add(new JTextField(10));
+		
+		JPanel price = new JPanel();
+		price.add(new JLabel("Price:"));
+		price.add(new JTextField(10));
+		
+		
+		JPanel description = new JPanel();
+		description.add(new JLabel("Description"));
+		description.add(new JScrollPane(new JTextArea(5, 20)));
+		
+		
+		form.add(MedicineName, gbc);
+		form.add(price, gbc);
+		form.add(description, gbc);
+		form.add(new JButton("submit"), gbc);
+        dialog.add(form);
+        
+        dialog.setSize(500, 400);
+        dialog.setLocationRelativeTo(this.frame);
+        
+        dialog.setVisible(true);
+        
+        return dialog;
+	}
+	
+	private JPanel createFinancePanel(String hospitalName) {
+		JPanel financePanel = new JPanel(new BorderLayout());
+		
+		JPanel header = new JPanel();
+		header.setLayout(new BorderLayout());
+		
+		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JLabel title = new JLabel(hospitalName+"'s Finances");
+		title.setFont(new Font("Arial", Font.BOLD, 20));
+		titlePanel.add(title);
+		
+		JPanel expenseAndIncomePanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); 
+		JLabel expenses = new JLabel("Expenses: 1000000");
+		JLabel income = new JLabel("Income: 1000000");
+	    expenseAndIncomePanel.add(expenses);
+	    expenseAndIncomePanel.add(income);
+		
+		JPanel addNewTransaction = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		JLabel textInfo = new JLabel("Add new Room");
+		JButton addButton = new JButton("+");
+		addButton.addActionListener(e -> {
+			JDialog dialog = addNewTransactionDialog();
+		});
+		addNewTransaction .add(textInfo);
+		addNewTransaction .add(addButton);
+		
+		header.add(titlePanel, BorderLayout.WEST);
+		header.add(expenseAndIncomePanel, BorderLayout.EAST);
+		header.add(addNewTransaction, BorderLayout.CENTER);
+		header.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
+		JPanel transactionPanel = new JPanel(new BorderLayout(10,10));
+		transactionPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+		JScrollPane scrollPane = transactionTable();
+		transactionPanel.add(scrollPane, BorderLayout.CENTER);
+		
+		
+		
+		financePanel.add(header, BorderLayout.NORTH);
+		financePanel.add(transactionPanel, BorderLayout.CENTER);
+		return financePanel;
+    }
+
+	private JScrollPane transactionTable() {
+    	String[] columnNames = {"Transaction ID", "Patient ID", "Description", "Amount", "Date", "Payment Method", "Credit Or Debit"};
+    	
+    	DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+    	
+    	JTable transactionTable = new JTable(model);
+    	
+    	for(int i = 0; i < 100; i++) {
+    		model.addRow(new Object[]{i, "P001", "Payment for Medicine", "200", "2022-01-01", "Cash", "credit"});
+    	}
+    	
+    	JScrollPane scrollPane = new JScrollPane(transactionTable);
+    	return scrollPane;
+    	
+	}
+	
+	private JDialog addNewTransactionDialog() {
+		JDialog dialog = new JDialog(frame, "Add New Transsaction", true);
+		
+		JPanel form  = new JPanel(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.anchor = GridBagConstraints.WEST;
+		
+		JPanel patientID = new JPanel();
+		patientID.add(new JLabel("Patient ID:"));
+		patientID.add(new JTextField(10));
+		
+		JPanel amount = new JPanel();
+		amount.add(new JLabel("Amount:"));
+		amount.add(new JTextField(10));
+		
+		JPanel date = new JPanel();
+		date.add(new JLabel("Date:"));
+		date.add(new JTextField(10));
+		
+		JPanel method = new JPanel();
+		method.add(new JLabel("Payment Method:"));
+		method.add(new JTextField(10));
+		
+		JPanel creditOrDebit = new JPanel();
+		creditOrDebit.add(new JLabel("Credit or Debit:"));
+		creditOrDebit.add(new JTextField(10));
+		
+		form.add(patientID, gbc);
+		form.add(amount, gbc);
+		form.add(date, gbc);
+		form.add(method, gbc);
+		form.add(creditOrDebit, gbc);
+		form.add(new JButton("submit"), gbc);
+        dialog.add(form);
+        
+        dialog.setSize(500, 400);
+        dialog.setLocationRelativeTo(this.frame);
+        
+        dialog.setVisible(true);
+        
+        return dialog;
+	}
+
+	private JPanel createFloorListPanel(String hospitalName) {
+		JPanel floorPanel = new JPanel(new BorderLayout());
+		
+		JPanel header = new JPanel();
+		header.setLayout(new BorderLayout());
+		
+		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JLabel title = new JLabel(hospitalName+"'s Floors");
+		title.setFont(new Font("Arial", Font.BOLD, 20));
+		titlePanel.add(title);
+		
+		
+		JPanel addNewFloor = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		JLabel textInfo = new JLabel("Add new Floor");
+		JButton addButton = new JButton("+");
+		addButton.addActionListener(e -> {
+			JDialog dialog = addNewFloorDialog();
+		});
+		addNewFloor .add(textInfo);
+		addNewFloor .add(addButton);
+		
+		header.add(titlePanel, BorderLayout.WEST);
+		header.add(addNewFloor, BorderLayout.EAST);
+		header.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
+		JPanel floorListPanel = new JPanel(new BorderLayout(10,10));
+		floorListPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+		JScrollPane scrollPane = floorTable();
+		floorListPanel.add(scrollPane, BorderLayout.CENTER);
+		
+		
+		
+		floorPanel.add(header, BorderLayout.NORTH);
+		floorPanel.add(floorListPanel, BorderLayout.CENTER);
+		return floorPanel;
+    }
+	
+	private JScrollPane floorTable() {
+    	String[] columnNames = {"ID", "Floor Number", "Number of Rooms"};
+    	
+    	DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+    	
+    	JTable floorTable = new JTable(model);
+    	
+    	for(int i = 0; i < 100; i++) {
+    		model.addRow(new Object[]{i, "floor " + i, 25});
+    	}
+    	
+    	JScrollPane scrollPane = new JScrollPane(floorTable);
+    	return scrollPane;
+    	
+	}
+	
+	private JDialog addNewFloorDialog() {
+		JDialog dialog = new JDialog(frame, "Add New Floor", true);
+		
+		JPanel form  = new JPanel(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.anchor = GridBagConstraints.WEST;
+		
+		JPanel floorNumber = new JPanel();
+		floorNumber.add(new JLabel("Floor Number:"));
+		floorNumber.add(new JTextField(10));
+		
+		JPanel NumberOfRooms = new JPanel();
+		NumberOfRooms.add(new JLabel("Number of Rooms:"));
+		NumberOfRooms.add(new JTextField(10));
+		
+		form.add(floorNumber, gbc);
+		form.add(NumberOfRooms, gbc);
+		form.add(new JButton("submit"), gbc);
         dialog.add(form);
         
         dialog.setSize(300, 200);
