@@ -87,6 +87,18 @@ public class Hospital implements Serializable{
 	  return this.staff.size();
   }
   
+  public String getPassword() {
+	  return this.password;
+  }
+  
+  public void setName(String name) {
+	  this.name = name;
+  }
+  
+  public void setPassword(String password) {
+	  this.password = password;
+  }
+  
   private void saveDetails() {
 	  try {
 		  FileOutputStream fileOut = new FileOutputStream("Hospital Management System.bak");

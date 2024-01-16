@@ -7,8 +7,12 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 
 import javax.swing.BorderFactory;
@@ -30,7 +34,6 @@ public class MainFrame {
 	private JFrame frame;
 	private JPanel createAccount;
 	private JPanel login;
-	private JPanel mainPanel;
 	private JTabbedPane tabbedPane;
 	private boolean isFirstTime;
 	private JPanel activePanel;
@@ -49,6 +52,8 @@ public class MainFrame {
 		this.frame.setLocationRelativeTo(null);
 		this.frame.setResizable(false);
 		
+		this.loadDetails();
+		
 		this.createAccount  = this.createAccountForm();
 		this.tabbedPane = this.createTabbedPane();
 		
@@ -56,11 +61,9 @@ public class MainFrame {
 		this.frame.add(login);
 		this.activePanel = this.login;
 		
-		
-		
-		
 		this.frame.setVisible(true);
 	}
+	
 	
 	private JPanel createAccountForm() {
 		JPanel createAccount;
@@ -124,15 +127,15 @@ public class MainFrame {
 				String password = new String(pf);
 				char[] cpf = hospitalConfirmPassword_PasswordField.getPassword();
 				String confirmPassword = new String(cpf);
-				System.out.println("Password: " + password);
-				System.out.println("Confirm Password: " + confirmPassword);
 				
 				if(password.equals(confirmPassword)) {
 					hospital = new Hospital(hospitalName, password);
+					System.out.println(hospitalName.toString());
 					frame.remove(activePanel);
 					frame.add(tabbedPane);
 					frame.revalidate();
 					frame.repaint();
+					activePanel = null;
 				} else {
 					info.setText("Passwords don't match");
 				}
@@ -171,6 +174,10 @@ public class MainFrame {
 	
 	private JPanel loginForm() {
 		JPanel login = new JPanel();
+		
+		JLabel info = new JLabel("");
+		info.setForeground(Color.RED);
+		
 		login.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
@@ -208,6 +215,28 @@ public class MainFrame {
 		submit.setFont(new Font("Arial", Font.BOLD, 15));
 		submit.setBackground(Color.BLUE);
 		submit.setForeground(Color.WHITE);
+		submit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+		        if (hospital == null) {
+		            info.setText("Your Account does not exist. Please sign up first.");
+		        } else {
+		            String name = hospitalNameTextField.getText();
+		            char[] pf = hospitalPassword_PasswordField.getPassword();
+		            String password = new String(pf);
+
+		            if (hospital.getPassword().equals(password) && hospital.getName().equals(name)) {
+		                frame.remove(activePanel);
+		                frame.add(tabbedPane);
+		                frame.revalidate();
+		                frame.repaint();
+		                activePanel = null;
+		            } else {
+		                info.setText("Wrong hospital name or password");
+		            }
+		        }
+			}
+		});
 		
 		JButton SignUp = new JButton("Create an account");
 		SignUp.setFont(new Font("Arial", Font.BOLD, 15));
@@ -228,44 +257,43 @@ public class MainFrame {
 		login.add(hospitalNameField, gbc);
 		login.add(hospitalPasswordField, gbc);
 		login.add(submitOrSignUp, gbc);
+		login.add(info, gbc);
 		
 		
 		return login;
 		
 	}
 	
-	
 	private JTabbedPane createTabbedPane() {
 		JTabbedPane tabbedPane = new JTabbedPane();
-		JPanel Patients = createPatientsListsPanel("Hospital");
+		JPanel Patients = createPatientsListsPanel();
 	    tabbedPane.addTab("Patients", Patients);
 	    
-	    JPanel Staff = createStaffListPanel("Hospital");
+	    JPanel Staff = createStaffListPanel();
 	    tabbedPane.addTab("Staff", Staff);
 		
-	    JPanel Equipments = createEquipmentListPanel("Hospital");
+	    JPanel Equipments = createEquipmentListPanel();
 	    tabbedPane.addTab("Equipment", Equipments);
 	    
-	    JPanel Rooms = createRoomListPanel("Hospital");
+	    JPanel Rooms = createRoomListPanel();
 	    tabbedPane.addTab("Rooms", Rooms);
 	    
-	    JPanel Pharmacy = createMedicineListPanel("Hospital");
+	    JPanel Pharmacy = createMedicineListPanel();
 	    tabbedPane.addTab("Pharmacy", Pharmacy);
 	    
-	    JPanel Finance = createFinancePanel("Hospital");
+	    JPanel Finance = createFinancePanel();
 	    tabbedPane.addTab("Finance", Finance);
 	    
-	    JPanel Floors = createFloorListPanel("Hospital");
+	    JPanel Floors = createFloorListPanel();
 	    tabbedPane.addTab("Floor", Floors);
 	    
-	    JPanel Settings = createSettingsPanel("Hospital");
+	    JPanel Settings = createSettingsPanel();
 	    tabbedPane.addTab("Settings", Settings);
 	    
 		return tabbedPane;
 	}
 	
-	
-	private JPanel createPatientsListsPanel(String hospitalName) {
+	private JPanel createPatientsListsPanel() {
 		JPanel patientsPanel = new JPanel(new BorderLayout(10, 10));
 	    patientsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10));
 		
@@ -274,7 +302,7 @@ public class MainFrame {
 		
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel title = new JLabel(hospitalName+"'s Patients List");
+		JLabel title = new JLabel(this.hospital != null? this.hospital.getName(): "" +"'s Patients List");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
@@ -355,14 +383,14 @@ public class MainFrame {
     	return scrollPane;
     }
 	
-    private JPanel createStaffListPanel(String hospitalName) {
+    private JPanel createStaffListPanel() {
 		JPanel staffPanel = new JPanel(new BorderLayout());
 		
 		JPanel header = new JPanel();
 		header.setLayout(new BorderLayout());
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel title = new JLabel(hospitalName+"'s Staff List");
+		JLabel title = new JLabel(this.hospital != null? this.hospital.getName(): ""+"'s Staff List");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
@@ -443,14 +471,14 @@ public class MainFrame {
         return dialog;
 	}
 	
-	private JPanel createEquipmentListPanel(String hospitalName) {
+	private JPanel createEquipmentListPanel() {
 		JPanel equipmentsPanel = new JPanel(new BorderLayout());
 		
 		JPanel header = new JPanel();
 		header.setLayout(new BorderLayout());
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel title = new JLabel(hospitalName+"'s Equipments List");
+		JLabel title = new JLabel(this.hospital != null? this.hospital.getName(): ""+"'s Equipments List");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
@@ -531,14 +559,14 @@ public class MainFrame {
         return dialog;
 	}
 
-	private JPanel createRoomListPanel(String hospitalName) {
+	private JPanel createRoomListPanel() {
 		JPanel roomsPanel = new JPanel(new BorderLayout());
 		
 		JPanel header = new JPanel();
 		header.setLayout(new BorderLayout());
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel title = new JLabel(hospitalName+"'s Room List");
+		JLabel title = new JLabel(this.hospital != null? this.hospital.getName(): ""+"'s Room List");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
@@ -619,14 +647,14 @@ public class MainFrame {
         return dialog;
 	}
 	
-	private JPanel createMedicineListPanel(String hospitalName) {
+	private JPanel createMedicineListPanel() {
 		JPanel medicinesPanel = new JPanel(new BorderLayout());
 		
 		JPanel header = new JPanel();
 		header.setLayout(new BorderLayout());
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel title = new JLabel(hospitalName+" Pharmacy's Medicine List");
+		JLabel title = new JLabel(this.hospital != null? this.hospital.getName(): ""+" Pharmacy's Medicine List");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
@@ -714,14 +742,14 @@ public class MainFrame {
         return dialog;
 	}
 	
-	private JPanel createFinancePanel(String hospitalName) {
+	private JPanel createFinancePanel() {
 		JPanel financePanel = new JPanel(new BorderLayout());
 		
 		JPanel header = new JPanel();
 		header.setLayout(new BorderLayout());
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel title = new JLabel(hospitalName+"'s Finances");
+		JLabel title = new JLabel(this.hospital != null? this.hospital.getName(): ""+"'s Finances");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
@@ -817,14 +845,14 @@ public class MainFrame {
         return dialog;
 	}
 
-	private JPanel createFloorListPanel(String hospitalName) {
+	private JPanel createFloorListPanel() {
 		JPanel floorPanel = new JPanel(new BorderLayout());
 		
 		JPanel header = new JPanel();
 		header.setLayout(new BorderLayout());
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel title = new JLabel(hospitalName+"'s Floors");
+		JLabel title = new JLabel(this.hospital != null? this.hospital.getName(): ""+"'s Floors");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
@@ -923,7 +951,7 @@ public class MainFrame {
         return dialog;
 	}
     
-	private JPanel createSettingsPanel(String hospitalName) {
+	private JPanel createSettingsPanel() {
 		JPanel settingPanel = new JPanel(new BorderLayout());
 		
 		JPanel header = new JPanel();
@@ -1013,8 +1041,7 @@ public class MainFrame {
             ex.printStackTrace();
         }
     }
-    
-    
+
     public void switchPanels(JPanel currentPanel, JPanel newPanel) {
     	if(currentPanel != null) {
     		frame.remove(currentPanel);
@@ -1025,4 +1052,30 @@ public class MainFrame {
     	frame.repaint();
     	this.activePanel = newPanel;
     }
+    
+    private void loadDetails() {
+      this.hospital = null;
+      File file = new File("Hospital Management System.bak");
+      if(file.exists()) {
+      	  try {
+        		FileInputStream fileIn = new FileInputStream(file);
+        		ObjectInputStream in  = new ObjectInputStream(fileIn);
+        		hospital = (Hospital) in.readObject();
+        		fileIn.close();
+        	  } catch (FileNotFoundException e) {
+        		// TODO Auto-generated catch block
+        	    e.printStackTrace();
+        	  } catch (IOException e) {
+        		// TODO Auto-generated catch block
+        	    e.printStackTrace();
+        	  } catch (ClassNotFoundException e) {
+        		// TODO Auto-generated catch block
+        	    System.out.println("User class not found");
+        	    e.printStackTrace();
+        	  }
+      } else {
+    	  System.out.println("File does not exist");
+      }
+    }
+
 }
