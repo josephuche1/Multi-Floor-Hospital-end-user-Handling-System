@@ -538,18 +538,80 @@ public class MainFrame {
 		
 		JPanel StaffName = new JPanel();
 		StaffName.add(new JLabel("Name:"));
-		StaffName.add(new JTextField(10));
+		JTextField staffNameField  = new JTextField(10);
+		StaffName.add(staffNameField);
 		
 		JPanel staffPosition = new JPanel();
 		staffPosition.add(new JLabel("Position:"));
-		staffPosition.add(new JTextField(10));
+		JRadioButton radioButton1 = new JRadioButton("Doctor");
+		JRadioButton radioButton2 = new JRadioButton("Nurse");
+		JRadioButton radioButton3 = new JRadioButton("Cleaner");
+		JRadioButton radioButton4 = new JRadioButton("Other");
+		ArrayList<JRadioButton> buttons = new ArrayList<JRadioButton>();
+		buttons.add(radioButton1);
+		buttons.add(radioButton2);
+		buttons.add(radioButton3);
+		buttons.add(radioButton4);
+		ButtonGroup group = new ButtonGroup();
+		group.add(radioButton1);
+		group.add(radioButton2);
+		group.add(radioButton3);
+		group.add(radioButton4);
+		staffPosition.add(radioButton1);
+		staffPosition.add(radioButton2);
+		staffPosition.add(radioButton3);
+		staffPosition.add(radioButton4);
+		
+		JButton submit = new JButton("submit");
+		
+		submit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String name = staffNameField.getText();
+				String id = String.valueOf(hospital.getNumberOfStaffMembers());
+				HospitalStaff newStaff;
+				JRadioButton selectedButton = null;
+				for(JRadioButton button : buttons) {
+					if(button.isSelected()) {
+						selectedButton = button;
+						break;
+					}
+				}
+				
+				
+				if(selectedButton != null) {
+					if(selectedButton.getText().equals(radioButton1.getText())) {
+						newStaff = new Doctor(id, name);
+					}
+					else if(selectedButton.getText().equals(radioButton2.getText())) {
+						newStaff = new Nurse(id, name);
+					}
+					else if(selectedButton.getText().equals(radioButton3.getText())) {
+						newStaff = new Cleaner(id, name);
+					}
+					else {
+						newStaff = new Other(id, name);
+					}
+				}
+				else {
+					newStaff = new Other(id, name);
+				}
+				
+				hospital.addStaff(newStaff);
+				DefaultTableModel model = (DefaultTableModel) staff.getModel();
+				Object[] row = {Integer.parseInt(newStaff.getId()), newStaff.getName(), newStaff.getPosition()};
+				model.addRow(row);
+				hospital.saveDetails();
+				dialog.setVisible(false);
+			}
+		});
 		
 		form.add(StaffName, gbc);
 		form.add(staffPosition, gbc);
-		form.add(new JButton("submit"), gbc);
+		form.add(submit, gbc);
         dialog.add(form);
         
-        dialog.setSize(300, 200);
+        dialog.setSize(400, 300);
         dialog.setLocationRelativeTo(this.frame);
         
         dialog.setVisible(true);

@@ -13,7 +13,7 @@ public abstract  class HospitalStaff implements Serializable{
 	  
   }
   public HospitalStaff(String id, String name) {
-	  this.id = id;
+	  this.id = "";
 	  this.name =name;
 	  this.position = "";
   }
@@ -32,6 +32,9 @@ public abstract  class HospitalStaff implements Serializable{
   }
   public String getPosition() {
 	  return this.position;
+  }
+  public void setId(String id) {
+	  this.id =id;
   }
   
   @Override
