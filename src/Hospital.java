@@ -1,3 +1,10 @@
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+
+
 /**
  * Hospital is a core class representing the hospital entity within the Multi-floor Hospital end-user Handling System.
  * It encapsulates all the data and operations related to the hospital, such as managing floors, rooms, patients, staff,
@@ -7,12 +14,6 @@
  * @author Uche Joseph
  * @version 1.0
  */
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-
 public class Hospital implements Serializable{
   private String name;
   private String password;

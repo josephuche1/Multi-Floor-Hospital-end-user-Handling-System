@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 /**
  * HospitalEquipment is an abstract class that represents the general characteristics of equipment within a hospital.
  * It serves as a base class for different types of hospital equipment, encapsulating common properties such as ID, name, and price.
@@ -7,8 +9,6 @@
  * @author Uche Joseph
  * @version 1.0
  */
-import java.io.Serializable;
-
 public abstract class HospitalEquipment implements Serializable{
 	private String id;
 	private String name;
