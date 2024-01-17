@@ -926,7 +926,7 @@ public class MainFrame {
 		header.setLayout(new BorderLayout());
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel title = new JLabel(this.hospital != null? this.hospital.getName(): ""+"'s Room List");
+		JLabel title = new JLabel("Room List");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
@@ -1160,7 +1160,7 @@ public class MainFrame {
 		header.setLayout(new BorderLayout());
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel title = new JLabel(this.hospital != null? this.hospital.getName(): ""+" Pharmacy's Medicine List");
+		JLabel title = new JLabel("Pharmacy's Medicine List");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
@@ -1331,7 +1331,7 @@ public class MainFrame {
 		header.setLayout(new BorderLayout());
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel title = new JLabel(this.hospital != null? this.hospital.getName(): ""+"'s Finances");
+		JLabel title = new JLabel("Finances");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
@@ -1531,7 +1531,7 @@ public class MainFrame {
 		header.setLayout(new BorderLayout());
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel title = new JLabel(this.hospital != null? this.hospital.getName(): ""+"'s Floors");
+		JLabel title = new JLabel("Floors");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
