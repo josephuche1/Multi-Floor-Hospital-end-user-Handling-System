@@ -6,6 +6,11 @@ public class DiagnosticEquipment extends HospitalEquipment{
 		super(id, name, location);
 		this.equipmentType = "Diagnostic Equipment";
 	}
+	
+	@Override
+	public  String getEquipmentType() {
+		return this.equipmentType;
+	}
 
 	@Override
 	public String toString() {

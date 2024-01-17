@@ -1,15 +1,21 @@
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class HospitalFinancial_Accounts implements Serializable{
     private double totalIncome;
     private double totalExpenses;
-    public double balance;
+    private double balance;
+    private ArrayList<Transaction> transactions;
+    private int transactionCount;
+    
 
     // Default constructor
     public HospitalFinancial_Accounts() {
         this.totalIncome = 0.0;
         this.totalExpenses = 0.0;
         this.balance = 0.0;
+        this.transactions = new ArrayList<Transaction>();
+        transactionCount = 0;
     }
 
     // Constructor with totalIncome and totalExpenses
@@ -17,6 +23,8 @@ public class HospitalFinancial_Accounts implements Serializable{
         this.totalIncome = totalIncome;
         this.totalExpenses = totalExpenses;
         this.balance = totalIncome - totalExpenses;
+        this.transactions = new ArrayList<Transaction>();
+        transactionCount = 0;
     }
 
     // Constructor with balance
@@ -24,6 +32,8 @@ public class HospitalFinancial_Accounts implements Serializable{
         this.totalIncome = balance;
         this.totalExpenses = 0.0;
         this.balance = balance;
+        this.transactions = new ArrayList<Transaction>();
+        transactionCount = 0;
     }
 
     // Get total income
@@ -52,10 +62,25 @@ public class HospitalFinancial_Accounts implements Serializable{
         this.totalExpenses += expenses;
         this.balance -= expenses;
     }
+    
+    public void addTransaction(Transaction transaction) {
+    	transactions.add(transaction);
+    	transactionCount++;
+    }
+    
+    public ArrayList<Transaction> getTransactions(){
+    	return this.transactions;
+    }
+    
 
     // Overriding toString method
     @Override
     public String toString() {
         return "Total Income: " + this.totalIncome + ", Total Expenses: " + this.totalExpenses + ", Balance: " + this.balance;
     }
+
+	public int getTransactionCount() {
+		// TODO Auto-generated method stub
+		return this.transactionCount;
+	}
 }

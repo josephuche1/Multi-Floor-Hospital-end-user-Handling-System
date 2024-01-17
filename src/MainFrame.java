@@ -44,6 +44,7 @@ public class MainFrame {
 	private JTable patients;
 	private JTable rooms;
 	private JTable staff;
+	private JTable equipments;
 	
 	public MainFrame() {
 		initialize();
@@ -308,8 +309,7 @@ public class MainFrame {
 		
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		String hospitalName = this.hospital != null? this.hospital.getName(): " " ;
-		JLabel title = new JLabel(hospitalName+"'s Patients List");
+		JLabel title = new JLabel("Patient's List");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
@@ -371,6 +371,8 @@ public class MainFrame {
 	
 	private JDialog addNewPatientsDialog() {
 		JDialog dialog = new JDialog(frame, "Add New Patients", true);
+		JLabel info = new JLabel("");
+		info.setForeground(Color.RED);
 		
 		JPanel form  = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -394,14 +396,17 @@ public class MainFrame {
 				String name = patientsNameField.getText();
 				String illnesses = patientsIllnessField.getText();
 				
-				int id = hospital.getNumberOfPatients();
+				int id = hospital.getPatientCount();
 				Patient newPatient = new Patient(Integer.toString(id), name, illnesses);
 				
 				hospital.addPatient(newPatient);
 				HospitalRoom room = hospital.assignPatient(newPatient);
-				newPatient.setRoomNumber(room.getRoomNumber());
-				
-				System.out.println(newPatient.getIllnesses());
+				if(room == null) {
+					info.setText("You dont't have any available rooms");
+				}
+				else {
+					newPatient.setRoomNumber(room.getRoomNumber());
+				}
 				
 				DefaultTableModel model = (DefaultTableModel) patients.getModel();
 				Object[] row = {Integer.parseInt(newPatient.getId()),newPatient.getName(), Integer.parseInt(newPatient.getRoomNumber()), newPatient.getIllnesses() };
@@ -414,6 +419,7 @@ public class MainFrame {
 		form.add(patientsName, gbc);
 		form.add(patientsIllness, gbc);
 		form.add(submit, gbc);
+		form.add(info, gbc);
         dialog.add(form);
         
         dialog.setSize(300, 200);
@@ -450,7 +456,7 @@ public class MainFrame {
 		header.setLayout(new BorderLayout());
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel title = new JLabel(this.hospital != null? this.hospital.getName(): ""+"'s Staff List");
+		JLabel title = new JLabel("Staff List");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
@@ -568,7 +574,7 @@ public class MainFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name = staffNameField.getText();
-				String id = String.valueOf(hospital.getNumberOfStaffMembers());
+				String id = String.valueOf(hospital.getStaffCount());
 				HospitalStaff newStaff;
 				JRadioButton selectedButton = null;
 				for(JRadioButton button : buttons) {
@@ -626,13 +632,30 @@ public class MainFrame {
 		header.setLayout(new BorderLayout());
 		
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel title = new JLabel(this.hospital != null? this.hospital.getName(): ""+"'s Equipments List");
+		JLabel title = new JLabel("Equipments List");
 		title.setFont(new Font("Arial", Font.BOLD, 20));
 		titlePanel.add(title);
 		
 		JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); 
 		JTextField searchText = new JTextField(10);
 		JButton searchButton = new JButton("Search");
+		searchButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String text = searchText.getText();
+                
+				DefaultTableModel model = (DefaultTableModel) equipments.getModel();
+				int columnIndex = 1;
+				
+				for (int i = 0; i < model.getRowCount(); i++) {
+				    if (((String) model.getValueAt(i, columnIndex)).equalsIgnoreCase(text)) {
+				    	equipments.setRowSelectionInterval(i, i);
+				    	equipments.scrollRectToVisible(equipments.getCellRect(i, 0, true));
+				        break;
+				    }
+				}
+			}
+		});
 		searchPanel.add(searchText);
 		searchPanel.add(searchButton);
 		
@@ -668,6 +691,10 @@ public class MainFrame {
     	DefaultTableModel model = new DefaultTableModel(columnNames, 0);
     	
     	JTable equipmentTable = new JTable(model);
+    	equipments = equipmentTable;
+    	
+    	ArrayList<HospitalEquipment> equipmentsI = new ArrayList<HospitalEquipment>();
+//    	equipmentsI.addAll(hospital != null ?  hospital.get() :equipmentsI);
     	
     	for(int i = 0; i < 100; i++) {
     		model.addRow(new Object[]{i, "item " + i, 123});
@@ -796,6 +823,8 @@ public class MainFrame {
 	
 	private JDialog addNewRoomDialog() {
 		JDialog dialog = new JDialog(frame, "Add New Room", true);
+		JLabel info = new JLabel("");
+		info.setForeground(Color.RED);
 		
 		JPanel form  = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -883,13 +912,19 @@ public class MainFrame {
 					newRoom = new GeneralWardRoom(roomNumber, floorNumber, available);
 				}
 				
-				hospital.addRoom(newRoom);
+			    String warning = hospital.addRoom(newRoom, floorNumber);
+			    if(warning.equals("Success")) {
+					DefaultTableModel model = (DefaultTableModel) rooms.getModel();
+					Object[] row = {Integer.parseInt(newRoom.getRoomNumber()), Integer.parseInt(newRoom.getFloorNumber()), newRoom.getRoomType(), newRoom.getAvailability()};
+					model.addRow(row);
+					hospital.saveDetails();
+					dialog.setVisible(false);
+			    }
+			    else {
+			    	info.setText(warning);
+			    }
 				
-				DefaultTableModel model = (DefaultTableModel) rooms.getModel();
-				Object[] row = {Integer.parseInt(newRoom.getRoomNumber()), Integer.parseInt(newRoom.getFloorNumber()), newRoom.getRoomType(), newRoom.getAvailability()};
-				model.addRow(row);
-				hospital.saveDetails();
-				dialog.setVisible(false);
+
 			}
 		});
 		
@@ -899,9 +934,10 @@ public class MainFrame {
 		form.add(isAvailable, gbc);
 		form.add(roomType, gbc);
 		form.add(submit, gbc);
+		form.add(info, gbc);
         dialog.add(form);
         
-        dialog.setSize(300, 200);
+        dialog.setSize(350, 250);
         dialog.setLocationRelativeTo(this.frame);
         
         dialog.setVisible(true);

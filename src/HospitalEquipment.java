@@ -36,6 +36,8 @@ public abstract class HospitalEquipment implements Serializable{
 		this.location = location;
 	}
 	
+	public abstract String getEquipmentType();
+	
 	@Override
 	public abstract String toString();
 }

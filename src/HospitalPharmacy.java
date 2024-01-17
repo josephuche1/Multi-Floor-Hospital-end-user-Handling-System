@@ -1,28 +1,21 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class HospitalPharmacy {
+public class HospitalPharmacy implements Serializable{
 	private ArrayList<Medicine> medicines;
-	private static  int medicineCount = 0;
+	private int countMedicine;
 	
 	//constructors
 	public HospitalPharmacy() {
 		this.medicines = new ArrayList<Medicine>();
-		this.medicineCount = this.medicines.size();
+		countMedicine = 0;
 	}
 	public HospitalPharmacy(ArrayList<Medicine> medicines) {
 		this.medicines = new ArrayList<Medicine>();
 		for(Medicine medicine : medicines) {
 			this.medicines.add(medicine);
 		}
-		this.medicineCount = this.medicines.size();
-	}
-	
-	public HospitalPharmacy(ArrayList<Medicine> medicines, boolean addNew) {
-		this.medicines = new ArrayList<Medicine>();
-		for(Medicine medicine : medicines) {
-			this.medicines.add(medicine);
-		}
-		this.medicineCount = this.medicines.size();
+		countMedicine = medicines.size();
 	}
 	
 	// public instance methods
@@ -32,12 +25,12 @@ public class HospitalPharmacy {
 	
 	public void addMedicine(Medicine medicine) {
 		this.medicines.add(medicine);
-		this.medicineCount = this.medicines.size();
+		countMedicine++;
 	}
 	
 	public void removeMedicine(Medicine medicine) {
 		this.medicines.remove(medicine);
-		this.medicineCount = this.medicines.size();
+		countMedicine--;
 	}
 	
 	public Medicine findMedicine(String name) {
@@ -48,9 +41,12 @@ public class HospitalPharmacy {
 		}
 		return null;
 	}
+	public int getCount() {
+		return this.countMedicine;
+	}
 	
 	@Override
 	public String toString() {
-		return "Pharmacy: \n Number of medicine: "+this.medicineCount;
+		return "Pharmacy: \n Number of medicine: "+this.medicines.size();
 	}
 }

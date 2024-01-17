@@ -15,39 +15,67 @@ public class Hospital implements Serializable{
   private String name;
   private String password;
   private String filename;
+  private HospitalPharmacy pharmacy;
+  private HospitalFinancial_Accounts finances;
   private ArrayList<Patient> patients;
   private ArrayList<HospitalStaff> staff;
   private ArrayList<HospitalRoom> rooms;
-  private ArrayList<Medicine> medicines;
+  private ArrayList<HospitalEquipment> equipments;
+  private ArrayList<HospitalFloor> floors;
+  private int floorCount;
+  private int staffCount;
+  private int patientsCount;
+  private int roomCount;
+  private int equipmentCount;
+  
   
   //Constructors
   public Hospital() {
-	  String name = "";
-	  patients = new ArrayList<Patient>();
-	  staff = new ArrayList<HospitalStaff>();
-	  rooms = new ArrayList<HospitalRoom>();
-	  medicines = new ArrayList<Medicine>();
-	  
+	  this.name = "";
+	  this.password = "";
+	  this.pharmacy = new HospitalPharmacy();
+	  this.finances = new HospitalFinancial_Accounts();
+	  this.patients = new ArrayList<Patient>();
+	  this.staff = new ArrayList<HospitalStaff>();
+	  this.rooms = new ArrayList<HospitalRoom>();
+	  this.equipments = new ArrayList<HospitalEquipment>();
+	  this.floors = new ArrayList<HospitalFloor>();
+	  this.floorCount = 0; 
+	  this.staffCount = 0;
+	  this.patientsCount = 0;
+	  this.roomCount = 0; 
+	  this.equipmentCount = 0;
+	  this.saveDetails();
   }
   
   public Hospital(String name, String password) {
 	  this.name = name;
 	  this.password = password;
+	  this.pharmacy = new HospitalPharmacy();
+	  this.finances = new HospitalFinancial_Accounts();
 	  this.patients = new ArrayList<Patient>();
 	  this.staff = new ArrayList<HospitalStaff>();
 	  this.rooms = new ArrayList<HospitalRoom>();
-	  medicines = new ArrayList<Medicine>();
-	  this.saveDetails();
+	  this.equipments = new ArrayList<HospitalEquipment>();
+	  this.floors = new ArrayList<HospitalFloor>();
+	  this.floorCount = 0; 
+	  this.staffCount = 0;
+	  this.patientsCount = 0;
+	  this.roomCount = 0; 
+	  this.equipmentCount = 0;
+	  saveDetails();
   }
   
   public Hospital(String name, String password, ArrayList<Patient> patients, ArrayList<HospitalStaff> staff, ArrayList<HospitalRoom> rooms) {
 	  this.name = name;
 	  this.password = password;
+	  this.pharmacy = new HospitalPharmacy();
+	  this.finances = new HospitalFinancial_Accounts();
 	  this.patients = new ArrayList<Patient>();
 	  this.staff = new ArrayList<HospitalStaff>();
 	  this.rooms = new ArrayList<HospitalRoom>();
-	  medicines = new ArrayList<Medicine>();
-	  
+	  this.equipments = new ArrayList<HospitalEquipment>();
+	  this.floors = new ArrayList<HospitalFloor>();
 	  int indexPatients = 0;
 	  
 	  for(Patient patient : patients) {
@@ -61,6 +89,12 @@ public class Hospital implements Serializable{
 	  for(HospitalRoom room : rooms) {
 		  this.rooms.add(room);
 	  }
+	  this.floorCount = 0; 
+	  this.staffCount = staff.size();
+	  this.patientsCount = patients.size();
+	  this.roomCount = rooms.size(); 
+	  this.equipmentCount = 0;
+	  this.saveDetails();
   }
   
   // public instance methods
@@ -68,27 +102,49 @@ public class Hospital implements Serializable{
 	  return this.name;
   }
   
-  public void addPatient(Patient patient) {
+  public void addEquipment(HospitalEquipment equipment) {
+	  this.equipments.add(equipment);
+	  this.equipmentCount++;
+  }
+  
+   public void addPatient(Patient patient) {
 	  this.patients.add(patient);
+	  this.patientsCount++;
   }
   
   public void addStaff(HospitalStaff staff) {
 	  this.staff.add(staff);
+	  this.staffCount++;
+  }
+  
+  public void addFloor(HospitalFloor floor) {
+	  this.floors.add(floor);
+	  this.floorCount++;
+  }
+  
+  public String addRoom(HospitalRoom room, String floorNumber) {
+	  for(HospitalRoom roomI : this.rooms) {
+		  if(roomI.getRoomNumber().equals(room.getRoomNumber())) {
+			  return "Room Already Exists";
+		  }
+	  }
+	  for(HospitalFloor floor: this.floors) {
+		  if(floor.getFloorNumber().equals(floorNumber)) {
+			  floor.addRoom(room);
+			  this.addRoom(room);
+			  this.roomCount++;
+			  return "Success";
+		  }
+	  }
+      return "Floor does not exist";
+  }
+  
+  public void addMedicine(Medicine medicine) {
+	  this.pharmacy.addMedicine(medicine);
   }
   
   public void addRoom(HospitalRoom room) {
 	  this.rooms.add(room);
-  }
-  
-  public int getNumberOfPatients() {
-	  return this.patients.size();
-  }
-  
-  public int getNumberOfRooms() {
-	  return this.rooms.size();
-  }
-  public int getNumberOfStaffMembers() {
-	  return this.staff.size();
   }
   
   public String getPassword() {
@@ -101,6 +157,10 @@ public class Hospital implements Serializable{
   
   public void setPassword(String password) {
 	  this.password = password;
+  }
+  
+  public void addTransaction(Transaction transaction) {
+	  this.finances.addTransaction(transaction);
   }
   
   public HospitalRoom assignPatient(Patient patient) {
@@ -121,9 +181,25 @@ public class Hospital implements Serializable{
 	  return this.rooms;
   }
   
+  public ArrayList<HospitalFloor> getFloors(){
+	  return this.floors;
+  }
+  
   public ArrayList<HospitalStaff> getStaff(){
 	  return this.staff;
   }
+  
+  public ArrayList<HospitalEquipment> getEquipment(){
+	  return this.equipments;
+  }
+  public ArrayList<Transaction> getTransactions(){
+	  return this.finances.getTransactions();
+  }
+  
+  public ArrayList<Medicine> getMedicines(){
+	  return this.pharmacy.getMedicines();
+  }
+  
   
   public void saveDetails() {
 	  try {
@@ -218,12 +294,27 @@ public class Hospital implements Serializable{
 	  return "Name: " + this.name + ". \n Staff Population: " + this.staff.size()+". \n Number of rooms: " + this.rooms.size()+ "\n Number of patients: "+ this.patients.size();
   }
   
-  public void addMedicine(Medicine medicine) {
-	  this.medicines.add(medicine);
+  public int getMedicineCount() {
+	  return this.pharmacy.getCount();
   }
   
-  public ArrayList<Medicine> getMedicines(){
-	  return this.medicines;
+  public int getTransactionCount() {
+	  return this.finances.getTransactionCount();
   }
   
+  public int getfloorCount() {
+	  return this.floorCount;
+  }
+  public int getRoomCount() {
+	  return this.roomCount;
+  }
+  public int getEquipmentCount() {
+	  return this.equipmentCount;
+  }
+  public int getPatientCount() {
+	  return this.patientsCount;
+  }
+  public int getStaffCount() {
+	  return this.staffCount;
+  }
 }
