@@ -38,6 +38,9 @@ public class HospitalFloor implements Serializable{
 	   this.rooms.add(room);
 	   roomCount++;
    }
+   public int getRoomCount() {
+	   return this.roomCount;
+   }
    
    
    @Override

@@ -1,14 +1,16 @@
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+/**
+ * Hospital is a core class representing the hospital entity within the Multi-floor Hospital end-user Handling System.
+ * It encapsulates all the data and operations related to the hospital, such as managing floors, rooms, patients, staff,
+ * and medical equipment. This class is responsible for maintaining the overall state of the hospital and providing methods
+ * to access and modify its data.
+ *
+ * @author Uche Joseph
+ * @version 1.0
+ */
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 public class Hospital implements Serializable{
@@ -29,7 +31,12 @@ public class Hospital implements Serializable{
   private int equipmentCount;
   
   
-  //Constructors
+  /**
+   * Default constructor for the Hospital class.
+   * Initializes a new Hospital instance with default values for name and password, and empty lists for patients, staff, rooms, equipment, and floors.
+   * It also initializes the pharmacy and financial accounts, sets the counts for floors, staff, patients, rooms, and equipment to zero,
+   * and invokes the saveDetails method to persist the initial state of the hospital.
+   */
   public Hospital() {
 	  this.name = "";
 	  this.password = "";
@@ -48,6 +55,14 @@ public class Hospital implements Serializable{
 	  this.saveDetails();
   }
   
+  /**
+   * Constructs a Hospital instance with the specified name and password.
+   * Initializes the pharmacy, financial accounts, and lists for patients, staff, rooms, equipment, and floors.
+   * Sets the counts for floors, staff, patients, rooms, and equipment to zero and saves the hospital details.
+   *
+   * @param name     The name of the hospital.
+   * @param password The password for securing the hospital's data.
+   */
   public Hospital(String name, String password) {
 	  this.name = name;
 	  this.password = password;
@@ -66,6 +81,19 @@ public class Hospital implements Serializable{
 	  saveDetails();
   }
   
+  /**
+   * Overloaded constructor for the Hospital class that initializes a new Hospital instance with specific details.
+   * Sets the hospital's name and password, and initializes the lists for patients, staff, and rooms with the provided collections.
+   * Also initializes the pharmacy and financial accounts, and empty lists for equipment and floors.
+   * The counts for staff, patients, and rooms are set based on the sizes of the provided collections, while floor and equipment counts are initialized to zero.
+   * Finally, it invokes the saveDetails method to persist the state of the hospital.
+   *
+   * @param name     The name of the hospital.
+   * @param password The password for hospital data security.
+   * @param patients A list of patients to be added to the hospital.
+   * @param staff    A list of staff members to be added to the hospital.
+   * @param rooms    A list of rooms to be added to the hospital.
+   */
   public Hospital(String name, String password, ArrayList<Patient> patients, ArrayList<HospitalStaff> staff, ArrayList<HospitalRoom> rooms) {
 	  this.name = name;
 	  this.password = password;
@@ -97,31 +125,68 @@ public class Hospital implements Serializable{
 	  this.saveDetails();
   }
   
-  // public instance methods
+  /**
+   * Retrieves the name of the hospital.
+   *
+   * @return A string representing the name of the hospital.
+   */
   public String getName() {
 	  return this.name;
   }
   
+  /**
+   * Adds a new piece of equipment to the hospital's inventory.
+   * Increments the equipment count upon successful addition.
+   *
+   * @param equipment The HospitalEquipment object to be added to the inventory.
+   */
   public void addEquipment(HospitalEquipment equipment) {
 	  this.equipments.add(equipment);
 	  this.equipmentCount++;
   }
   
-   public void addPatient(Patient patient) {
+  /**
+   * Adds a new patient to the hospital's patient list.
+   * Increments the patient count to reflect the addition.
+   *
+   * @param patient The Patient object to be added to the hospital's list of patients.
+   */
+  public void addPatient(Patient patient) {
 	  this.patients.add(patient);
 	  this.patientsCount++;
   }
   
+  /**
+   * Adds a new staff member to the hospital's staff list.
+   * Increments the staff count to keep track of the total number of staff members.
+   *
+   * @param staff The HospitalStaff object to be added to the hospital's staff list.
+   */
   public void addStaff(HospitalStaff staff) {
 	  this.staff.add(staff);
 	  this.staffCount++;
   }
   
+  /**
+   * Adds a new floor to the hospital's list of floors.
+   * Increments the floor count to update the total number of floors in the hospital.
+   *
+   * @param floor The HospitalFloor object to be added to the hospital's floor list.
+   */
   public void addFloor(HospitalFloor floor) {
 	  this.floors.add(floor);
 	  this.floorCount++;
   }
   
+  /**
+   * Attempts to add a new room to a specified floor in the hospital.
+   * Checks if the room already exists before adding it to the appropriate floor and increments the room count.
+   * Returns a message indicating the success of the operation or the reason for failure.
+   *
+   * @param room        The HospitalRoom object to be added.
+   * @param floorNumber The floor number where the room is to be added.
+   * @return A string message indicating the result of the operation.
+   */
   public String addRoom(HospitalRoom room, String floorNumber) {
 	  for(HospitalRoom roomI : this.rooms) {
 		  if(roomI.getRoomNumber().equals(room.getRoomNumber())) {
@@ -139,22 +204,49 @@ public class Hospital implements Serializable{
       return "Floor does not exist";
   }
   
+  /**
+   * Adds a new medicine to the hospital's pharmacy inventory.
+   * The pharmacy is responsible for managing the addition and updating its records accordingly.
+   *
+   * @param medicine The Medicine object to be added to the pharmacy's inventory.
+   */
   public void addMedicine(Medicine medicine) {
 	  this.pharmacy.addMedicine(medicine);
   }
   
+  /**
+   * Adds a new room to the hospital's overall list of rooms without specifying a floor.
+   * This method is typically used when the floor assignment is not necessary or has been handled elsewhere.
+   *
+   * @param room The HospitalRoom object to be added to the hospital's list of rooms.
+   */
   public void addRoom(HospitalRoom room) {
 	  this.rooms.add(room);
   }
   
+  /**
+   * Retrieves the password for the hospital's system.
+   *
+   * @return A string representing the hospital's password.
+   */
   public String getPassword() {
 	  return this.password;
   }
   
+  /**
+   * Sets the name of the hospital to the specified string.
+   *
+   * @param name The new name to be assigned to the hospital.
+   */
   public void setName(String name) {
 	  this.name = name;
   }
   
+  /**
+   * Updates the password for the hospital's system.
+   *
+   * @param password The new password to be set for the hospital.
+   */
   public void setPassword(String password) {
 	  this.password = password;
   }
@@ -213,81 +305,7 @@ public class Hospital implements Serializable{
 	  }
   }
   
-  public void loadDetails(Hospital hospital) {
-	  try {
-		FileInputStream fileIn = new FileInputStream("Hospital Management System.bak");
-		ObjectInputStream in  = new ObjectInputStream(fileIn);
-		hospital = (Hospital) in.readObject();
-		fileIn.close();
-	} catch (FileNotFoundException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (ClassNotFoundException e) {
-		// TODO Auto-generated catch block
-		System.out.println("User class not found");
-		e.printStackTrace();
-	}
-  }
-  
-  public void saveHospital() {
-	  try {
-		  FileOutputStream fileOut = new FileOutputStream(filename);
-		  ObjectOutputStream out = new ObjectOutputStream(fileOut);
-		  out.writeObject(this);
-		  out.close();
-		  fileOut.close();
-	  } catch(IOException e) {
-		  e.printStackTrace();
-	  }
-  }
-  
-  public void loadHospital(Hospital hospital) {
-	  try {
-		FileInputStream fileIn = new FileInputStream(this.filename);
-		ObjectInputStream in  = new ObjectInputStream(fileIn);
-		hospital = (Hospital) in.readObject();
-		fileIn.close();
-	} catch (FileNotFoundException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (ClassNotFoundException e) {
-		// TODO Auto-generated catch block
-		System.out.println("User class not found");
-		e.printStackTrace();
-	}
-  }
-  
-  private void saveFilename() {
-	  try {
-		PrintWriter writer = new PrintWriter("filename.txt", "UTF-8");
-		writer.println(filename);
-		writer.close();
-	} catch (FileNotFoundException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (UnsupportedEncodingException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	  
-  }
-  
-  private void loadFilename() {
-	  try {
-		BufferedReader reader = new BufferedReader(new FileReader("filename.txt"));
-		this.filename = reader.readLine();
-		reader.close();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-  }
+
   
   @Override
   public String toString() {

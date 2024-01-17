@@ -1,3 +1,14 @@
+/**
+ * Represents the main window of the Multi-floor Hospital end-user Handling System.
+ * This class is responsible for initializing the application, creating the user interface,
+ * and orchestrating the interactions between different components of the system.
+ * It manages user sessions, including login and account creation, and provides tabs for
+ * accessing various functionalities such as patient management, room assignments, staff scheduling,
+ * and financial transactions.
+ *
+ * @author Uche Joseph
+ * @version 1.0
+ */
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -38,7 +49,7 @@ public class MainFrame {
 	private JPanel createAccount;
 	private JPanel login;
 	private JTabbedPane tabbedPane;
-	private boolean isFirstTime;
+	private boolean isChecked;
 	private JPanel activePanel;
 	private Hospital hospital;
 	private JTable patients;
@@ -46,11 +57,26 @@ public class MainFrame {
 	private JTable staff;
 	private JTable equipments;
 	private JTable medicines;
+	private JTable transactions;
+	private JTable floors;
+	private int expenses = 0;
+	private int income = 0;
+	private String filename;
 	
+	/**
+	 * Constructor for MainFrame class. It sets up the main application window, initializes the user interface components,
+	 * and prepares the application for user interaction. The constructor calls the initialize method to set up the frame
+	 * and its contents, including panels for login, account creation, and the main tabbed pane.
+	 */
 	public MainFrame() {
 		initialize();
 	}
-
+	
+	/**
+	 * Initializes the MainFrame by setting up the main window properties, loading the checkbox state,
+	 * loading any saved details, creating the account creation form, the login form, and the tabbed pane.
+	 * It sets the login panel as the active panel and makes the frame visible.
+	 */
 	private void initialize() {
 		// TODO Auto-generated method stub
 		this.frame = new JFrame();
@@ -60,6 +86,9 @@ public class MainFrame {
 		this.frame.setLocationRelativeTo(null);
 		this.frame.setResizable(false);
 		
+		
+		
+		this.isChecked = this.loadCheckboxState();
 		this.loadDetails();
 		
 		this.createAccount  = this.createAccountForm();
@@ -72,7 +101,14 @@ public class MainFrame {
 		this.frame.setVisible(true);
 	}
 	
-	
+	/**
+	 * Creates and returns the JPanel for the account creation form.
+	 * This panel includes input fields for the hospital name and password, a confirmation password field,
+	 * and buttons for submitting the form or returning to the login screen.
+	 * It also sets up the layout and visual style for the form.
+	 *
+	 * @return JPanel representing the account creation form.
+	 */
 	private JPanel createAccountForm() {
 		JPanel createAccount;
 		
@@ -180,6 +216,14 @@ public class MainFrame {
 		
 	}
 	
+	/**
+	 * Creates and returns the JPanel for the login form.
+	 * This panel includes input fields for the hospital name and password, and buttons for submitting the login credentials
+	 * or switching to the account creation form. It also handles the login logic, including validation of the user's input.
+	 * Visual layout and styling are set up within this method.
+	 *
+	 * @return JPanel representing the login form.
+	 */
 	private JPanel loginForm() {
 		JPanel login = new JPanel();
 		
@@ -272,6 +316,13 @@ public class MainFrame {
 		
 	}
 	
+	/**
+	 * Creates and returns a JTabbedPane which serves as the main navigation structure within the application.
+	 * It sets up individual tabs for different sections such as Patients, Staff, Equipment, Rooms, Pharmacy, Finance, and Floors.
+	 * Each tab is associated with a panel that is created by calling the respective method for that section.
+	 *
+	 * @return JTabbedPane with all the tabs and their corresponding panels added to it.
+	 */
 	private JTabbedPane createTabbedPane() {
 		JTabbedPane tabbedPane = new JTabbedPane();
 		JPanel Patients = createPatientsListsPanel();
@@ -301,6 +352,13 @@ public class MainFrame {
 		return tabbedPane;
 	}
 	
+	/**
+	 * Creates and returns a JPanel that contains the list of patients.
+	 * This panel includes components such as a table to display patient information and buttons for adding or editing patient details.
+	 * It sets up the layout for the patient list and integrates the necessary event listeners for interaction.
+	 *
+	 * @return JPanel representing the patients list section of the application.
+	 */
 	private JPanel createPatientsListsPanel() {
 		JPanel patientsPanel = new JPanel(new BorderLayout(10, 10));
 	    patientsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10));
@@ -370,6 +428,13 @@ public class MainFrame {
 		return patientsPanel;
 	}
 	
+	/**
+	 * Creates and displays a dialog for adding a new patient to the system.
+	 * The dialog includes form fields for entering patient details such as name, age, diagnosis, etc.
+	 * It also handles the logic for validating input data and updating the patient list upon confirmation.
+	 *
+	 * @return JDialog object representing the 'Add New Patient' dialog window.
+	 */
 	private JDialog addNewPatientsDialog() {
 		JDialog dialog = new JDialog(frame, "Add New Patients", true);
 		JLabel info = new JLabel("");
@@ -412,8 +477,10 @@ public class MainFrame {
 				DefaultTableModel model = (DefaultTableModel) patients.getModel();
 				Object[] row = {Integer.parseInt(newPatient.getId()),newPatient.getName(), Integer.parseInt(newPatient.getRoomNumber()), newPatient.getIllnesses() };
 				model.addRow(row);
-				hospital.saveDetails();
-				form.setVisible(false);
+				if(isChecked) {
+					hospital.saveDetails();
+				}
+				dialog.setVisible(false);
 			}
 		});
 		
@@ -431,6 +498,13 @@ public class MainFrame {
         return dialog;
 	}
 	
+	/**
+	 * Creates and returns a JScrollPane containing a JTable for patient data.
+	 * The table is set up with the appropriate column names and model to display patient information.
+	 * This method is responsible for populating the table with data from the hospital's patient list.
+	 *
+	 * @return JScrollPane with a JTable of patient information.
+	 */
     private JScrollPane patientsTable() {
     	String[] columnNames = {"ID", "Name", "Room Number", "Illnesses"};
     	
@@ -450,6 +524,13 @@ public class MainFrame {
     	return scrollPane;
     }
 	
+    /**
+     * Creates and returns a JPanel that contains the list of staff members.
+     * This panel includes a table to display staff information and may include buttons for adding, editing, or removing staff members.
+     * It sets up the layout for the staff list and integrates any necessary event listeners for user interactions.
+     *
+     * @return JPanel representing the staff list section of the application.
+     */
     private JPanel createStaffListPanel() {
 		JPanel staffPanel = new JPanel(new BorderLayout());
 		
@@ -516,6 +597,13 @@ public class MainFrame {
 		return staffPanel;
     }
 
+    /**
+     * Constructs and returns a JScrollPane that encapsulates a JTable designed for displaying staff data.
+     * The method configures the table's column headers to match the staff information structure and initializes the table model.
+     * It also populates the table with existing staff data from the hospital management system.
+     *
+     * @return JScrollPane containing a JTable with staff details.
+     */
 	private JScrollPane staffTable() {
     	String[] columnNames = {"ID", "Name", "Position"};
     	
@@ -536,6 +624,13 @@ public class MainFrame {
     	
 	}
 	
+	/**
+	 * Creates and displays a dialog for adding a new staff member to the hospital system.
+	 * The dialog includes input fields for the staff member's details such as name, department, and contact information.
+	 * It also contains logic to validate the entered data and to update the staff list with the new member's details upon submission.
+	 *
+	 * @return JDialog representing the 'Add New Staff' dialog window.
+	 */
 	private JDialog addNewStaffDialog() {
 		JDialog dialog = new JDialog(frame, "Add New Staff", true);
 		
@@ -609,7 +704,9 @@ public class MainFrame {
 				DefaultTableModel model = (DefaultTableModel) staff.getModel();
 				Object[] row = {Integer.parseInt(newStaff.getId()), newStaff.getName(), newStaff.getPosition()};
 				model.addRow(row);
-				hospital.saveDetails();
+				if(isChecked) {
+					hospital.saveDetails();
+				}
 				dialog.setVisible(false);
 			}
 		});
@@ -627,6 +724,13 @@ public class MainFrame {
         return dialog;
 	}
 	
+	/**
+	 * Creates and returns a JPanel that displays the list of medical equipment.
+	 * This panel includes a table for equipment details and may include functionality for adding, editing, or removing equipment entries.
+	 * It arranges the layout for the equipment list and sets up the necessary event handling for user interactions.
+	 *
+	 * @return JPanel representing the equipment list section of the application.
+	 */
 	private JPanel createEquipmentListPanel() {
 		JPanel equipmentsPanel = new JPanel(new BorderLayout());
 		
@@ -688,6 +792,14 @@ public class MainFrame {
 		return equipmentsPanel;
     }
 	
+	/**
+	 * Creates and returns a JScrollPane containing a JTable to display equipment data.
+	 * The table is initialized with column headers that correspond to the equipment data fields,
+	 * and the table model is filled with the current equipment inventory from the system.
+	 * This method ensures the equipment data is presented in a user-friendly tabular format.
+	 *
+	 * @return JScrollPane with a JTable showcasing the equipment inventory.
+	 */
 	private JScrollPane equipmentTable() {
     	String[] columnNames = {"ID", "Name", "Type", "Price"};
     	
@@ -708,6 +820,13 @@ public class MainFrame {
     	
 	}
 	
+	/**
+	 * Creates and presents a dialog for inputting details of new equipment to be added to the hospital's inventory.
+	 * The dialog includes fields for the equipment's name, type, quantity, and other relevant details.
+	 * It also handles the validation of the input and updates the equipment list with the new entry upon user confirmation.
+	 *
+	 * @return JDialog that facilitates the addition of new equipment to the inventory.
+	 */
 	private JDialog addNewEquipmentDialog() {
 		JDialog dialog = new JDialog(frame, "Add New Staff", true);
 		JLabel info = new JLabel("");
@@ -767,7 +886,9 @@ public class MainFrame {
 					newEquipment = new DiagnosticEquipment(String.valueOf(id), name, price);
 				}
 				hospital.addEquipment(newEquipment);
-				hospital.saveDetails();
+				if(isChecked) {
+					hospital.saveDetails();
+				}
 				
 				Object[] row = {Integer.parseInt(newEquipment.getId()), newEquipment.getName(), newEquipment.getEquipmentType(), newEquipment.getPrice()};
 				DefaultTableModel model = (DefaultTableModel) equipments.getModel();
@@ -790,7 +911,14 @@ public class MainFrame {
         
         return dialog;
 	}
-
+	
+	/**
+	 * Constructs and returns a JPanel that showcases the list of rooms in the hospital.
+	 * This panel features a table to display room information and typically includes options for adding, editing, or deleting room records.
+	 * It establishes the layout for the room list and incorporates necessary event handlers for interactions such as room selection or modification.
+	 *
+	 * @return JPanel representing the room list interface of the application.
+	 */
 	private JPanel createRoomListPanel() {
 		JPanel roomsPanel = new JPanel(new BorderLayout());
 		
@@ -856,6 +984,13 @@ public class MainFrame {
 		return roomsPanel;
     }
 	
+	/**
+	 * Generates and returns a JScrollPane that contains a JTable for displaying room information.
+	 * The table is set up with column headers that reflect the room attributes, and the table model is populated with data representing the current state of room occupancy and details.
+	 * This method is responsible for the visual representation of room data in a structured table format.
+	 *
+	 * @return JScrollPane with a JTable that provides an overview of the hospital's rooms.
+	 */
 	private JScrollPane roomTable() {
     	String[] columnNames = {"Room Number", "Floor Number", "Room Type", "Availability"};
     	
@@ -878,6 +1013,13 @@ public class MainFrame {
     	
 	}
 	
+	/**
+	 * Creates and displays a dialog for adding a new room to the hospital's database.
+	 * This dialog includes form fields for the room's details such as room number, type, and status.
+	 * It also contains logic to validate the entered information and to update the room list with the new room's details upon user confirmation.
+	 *
+	 * @return JDialog object that allows the user to add a new room to the system.
+	 */
 	private JDialog addNewRoomDialog() {
 		JDialog dialog = new JDialog(frame, "Add New Room", true);
 		JLabel info = new JLabel("");
@@ -974,7 +1116,9 @@ public class MainFrame {
 					DefaultTableModel model = (DefaultTableModel) rooms.getModel();
 					Object[] row = {Integer.parseInt(newRoom.getRoomNumber()), Integer.parseInt(newRoom.getFloorNumber()), newRoom.getRoomType(), newRoom.getAvailability()};
 					model.addRow(row);
-					hospital.saveDetails();
+					if(isChecked) {
+						hospital.saveDetails();
+					}
 					dialog.setVisible(false);
 			    }
 			    else {
@@ -1002,6 +1146,13 @@ public class MainFrame {
         return dialog;
 	}
 	
+	/**
+	 * Creates and returns a JPanel that displays the list of medicines available in the hospital.
+	 * This panel includes a table for medicine details and may include functionality for adding, editing, or removing medicine entries.
+	 * It arranges the layout for the medicine list and sets up the necessary event handling for user interactions.
+	 *
+	 * @return JPanel representing the medicine list section of the application.
+	 */
 	private JPanel createMedicineListPanel() {
 		JPanel medicinesPanel = new JPanel(new BorderLayout());
 		
@@ -1068,6 +1219,13 @@ public class MainFrame {
 		return medicinesPanel;
     }
 	
+	/**
+	 * Constructs and returns a JScrollPane that includes a JTable for displaying medicine inventory.
+	 * The table is initialized with appropriate column headers for medicine details, and the table model is populated with the current medicine stock from the system.
+	 * This method ensures that the medicine data is presented in an organized, tabular format for easy viewing and management.
+	 *
+	 * @return JScrollPane containing a JTable with the inventory of medicines.
+	 */
 	private JScrollPane medicineTable() {
     	String[] columnNames = {"ID", "Name", "Description", "Price"};
     	
@@ -1088,6 +1246,13 @@ public class MainFrame {
     	
 	}
 	
+	/**
+	 * Creates and shows a dialog for entering details of new medicine to be added to the hospital's inventory.
+	 * The dialog provides input fields for the medicine's name, dosage, manufacturer, and other pertinent information.
+	 * It includes validation of the data entered and updates the medicine inventory list with the new item upon confirmation.
+	 *
+	 * @return JDialog for facilitating the addition of new medicine to the inventory.
+	 */
 	private JDialog addNewMedicineDialog() {
 		JDialog dialog = new JDialog(frame, "Add New Medicine", true);
 		JLabel info = new JLabel("");
@@ -1111,8 +1276,8 @@ public class MainFrame {
 		
 		JPanel description = new JPanel();
 		description.add(new JLabel("Description"));
-		JTextArea descriptionArea = new JTextArea(5, 20);
-		description.add(new JScrollPane(descriptionArea));
+		JTextField descriptionArea = new JTextField(10);
+		description.add(descriptionArea);
 		
 		JButton submit = new JButton("Submit");
 		submit.addActionListener(new ActionListener() {
@@ -1124,7 +1289,9 @@ public class MainFrame {
 				
 				Medicine medicine = new Medicine(id, name, description, price);
 				hospital.addMedicine(medicine);
-				hospital.saveDetails();
+				if(isChecked) {
+					hospital.saveDetails();
+				}
 				
 				DefaultTableModel model = (DefaultTableModel) medicines.getModel();
 				Object[] row = {Integer.parseInt(medicine.getId()), medicine.getName(), medicine.getDescription(), medicine.getPrice()};
@@ -1150,6 +1317,13 @@ public class MainFrame {
         return dialog;
 	}
 	
+	/**
+	 * Creates and returns a JPanel that organizes and displays financial information for the hospital.
+	 * This panel may include tables or summaries of income and expenses, and options for recording financial transactions.
+	 * It sets up the layout for the finance section and integrates any necessary components for financial management and reporting.
+	 *
+	 * @return JPanel representing the finance management section of the application.
+	 */
 	private JPanel createFinancePanel() {
 		JPanel financePanel = new JPanel(new BorderLayout());
 		
@@ -1192,16 +1366,27 @@ public class MainFrame {
 		financePanel.add(transactionPanel, BorderLayout.CENTER);
 		return financePanel;
     }
-
+	
+	/**
+	 * Creates and returns a JScrollPane containing a JTable to display transaction records.
+	 * The table is set up with column headers suitable for financial transactions, such as date, description, amount, and type.
+	 * It populates the table model with transaction data from the hospital's financial records.
+	 *
+	 * @return JScrollPane with a JTable that provides a detailed view of financial transactions.
+	 */
 	private JScrollPane transactionTable() {
     	String[] columnNames = {"Transaction ID", "Patient ID", "Description", "Amount", "Date", "Payment Method", "Credit Or Debit"};
     	
     	DefaultTableModel model = new DefaultTableModel(columnNames, 0);
     	
     	JTable transactionTable = new JTable(model);
+    	transactions = transactionTable;
     	
-    	for(int i = 0; i < 100; i++) {
-    		model.addRow(new Object[]{i, "P001", "Payment for Medicine", "200", "2022-01-01", "Cash", "credit"});
+    	ArrayList<Transaction> transactionI = new ArrayList<Transaction>();
+    	transactionI.addAll(hospital != null ? hospital.getTransactions() : transactionI);
+    	
+    	for(Transaction trans : transactionI) {
+    		model.addRow(new Object[]{Integer.parseInt(trans.getTransactionId()), Integer.parseInt(trans.getPatientId()), trans.getDescription(), trans.getAmount(), trans.getDate(), trans.getPaymentMethod(), trans.getCreditOrDebit()});
     	}
     	
     	JScrollPane scrollPane = new JScrollPane(transactionTable);
@@ -1209,8 +1394,17 @@ public class MainFrame {
     	
 	}
 	
+	/**
+	 * Constructs and displays a dialog for adding a new financial transaction to the hospital's records.
+	 * This dialog includes fields for inputting the transaction details such as the type (income or expense), amount, description, and date.
+	 * It ensures the validation of the entered data and updates the transaction list with the new record upon user confirmation.
+	 *
+	 * @return JDialog that enables the user to add a new financial transaction to the hospital's ledger.
+	 */
 	private JDialog addNewTransactionDialog() {
 		JDialog dialog = new JDialog(frame, "Add New Transsaction", true);
+		JLabel info = new JLabel("");
+		info.setForeground(Color.RED);
 		
 		JPanel form  = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -1219,30 +1413,100 @@ public class MainFrame {
 		
 		JPanel patientID = new JPanel();
 		patientID.add(new JLabel("Patient ID:"));
-		patientID.add(new JTextField(10));
+		JTextField patientIDField = new JTextField(10);
+		patientID.add(patientIDField);
 		
 		JPanel amount = new JPanel();
 		amount.add(new JLabel("Amount:"));
-		amount.add(new JTextField(10));
+		JTextField amountField = new JTextField(10);
+		amount.add(amountField);
 		
 		JPanel date = new JPanel();
 		date.add(new JLabel("Date:"));
-		date.add(new JTextField(10));
+		JTextField dateField = new JTextField(10);
+		date.add(dateField);
+		
+		JPanel description = new JPanel();
+		description.add(new JLabel("Payment Method:"));
+		JTextField descriptionField = new JTextField(10);
+		description.add(descriptionField);
 		
 		JPanel method = new JPanel();
 		method.add(new JLabel("Payment Method:"));
-		method.add(new JTextField(10));
+		JTextField methodField = new JTextField(10);
+		method.add(methodField);
 		
 		JPanel creditOrDebit = new JPanel();
 		creditOrDebit.add(new JLabel("Credit or Debit:"));
-		creditOrDebit.add(new JTextField(10));
+		JRadioButton radioButton1 = new JRadioButton("Credit");
+		JRadioButton radioButton2 = new JRadioButton("Debit");
+		ArrayList<JRadioButton> buttons = new ArrayList<JRadioButton>();
+		buttons.add(radioButton1);
+		buttons.add(radioButton2);
+		ButtonGroup group = new ButtonGroup();
+		group.add(radioButton1);
+		group.add(radioButton2);
+		creditOrDebit.add(radioButton1);
+		creditOrDebit.add(radioButton2);
+		
+		JButton submit = new JButton("submit");
+		submit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				try {
+					String patientId = patientIDField.getText();
+					double amount = Double.parseDouble(amountField.getText());
+					Integer.parseInt(patientId);
+					
+					String date = dateField.getText();
+					String description = descriptionField.getText();
+					String paymentMethod = methodField.getText();
+					String creditOrDebit;
+					
+					JRadioButton selectedButton = null;
+					for (JRadioButton button : buttons) {
+					    if (button.isSelected()) {
+					        selectedButton = button;
+					        break;
+					    }
+					}
+					if (selectedButton != null) {
+					    if(selectedButton.getText().equals(radioButton1.getText())) {
+					    	creditOrDebit = radioButton1.getText();
+					    	income += amount;
+					    }else {
+					    	creditOrDebit = radioButton2.getText();
+					    	expenses += amount;
+					    }
+					} else {
+						creditOrDebit = " ";
+					}
+					String id = String.valueOf(hospital.getTransactionCount());
+					System.out.println(id);
+					Transaction trans = new Transaction(id,patientId, description, amount, date, paymentMethod, creditOrDebit );
+					hospital.addTransaction(trans);
+					
+					DefaultTableModel model = (DefaultTableModel) transactions.getModel();
+		    		model.addRow(new Object[]{Integer.parseInt(trans.getTransactionId()), Integer.parseInt(trans.getPatientId()), trans.getDescription(), trans.getAmount(), trans.getDate(), trans.getPaymentMethod(), trans.getCreditOrDebit()});
+		    		hospital.saveDetails();
+		    		
+		    		dialog.setVisible(false);
+				} catch (NumberFormatException i) {
+				    info.setText("Invalid Input");
+				}
+				
+
+			}
+		});
 		
 		form.add(patientID, gbc);
 		form.add(amount, gbc);
 		form.add(date, gbc);
+		form.add(description, gbc);
 		form.add(method, gbc);
 		form.add(creditOrDebit, gbc);
-		form.add(new JButton("submit"), gbc);
+		form.add(submit, gbc);
+		form.add(info, gbc);
         dialog.add(form);
         
         dialog.setSize(500, 400);
@@ -1253,6 +1517,13 @@ public class MainFrame {
         return dialog;
 	}
 
+	/**
+	 * Constructs and returns a JPanel that displays the list of floors within the hospital.
+	 * This panel includes a table to show floor details, and may also provide options for adding, editing, or removing floor entries.
+	 * It sets up the layout for the floor list and integrates necessary event handlers for user interactions with the floor data.
+	 *
+	 * @return JPanel representing the floor list section of the application.
+	 */
 	private JPanel createFloorListPanel() {
 		JPanel floorPanel = new JPanel(new BorderLayout());
 		
@@ -1290,15 +1561,25 @@ public class MainFrame {
 		return floorPanel;
     }
 	
+	/**
+	 * Generates and returns a JScrollPane containing a JTable that lists the floors of the hospital.
+	 * The table is initialized with column headers to display floor-specific information, such as floor number and room count.
+	 * The method populates the table with data reflecting the current configuration of the hospital's floors.
+	 *
+	 * @return JScrollPane with a JTable that outlines the details of the hospital's floors.
+	 */
 	private JScrollPane floorTable() {
     	String[] columnNames = {"ID", "Floor Number", "Number of Rooms"};
     	
     	DefaultTableModel model = new DefaultTableModel(columnNames, 0);
     	
     	JTable floorTable = new JTable(model);
+    	floors = floorTable;
     	
-    	for(int i = 0; i < 100; i++) {
-    		model.addRow(new Object[]{i, "floor " + i, 25});
+    	ArrayList<HospitalFloor> floorsI = new ArrayList<HospitalFloor>();
+    	floorsI.addAll(hospital != null ? hospital.getFloors():floorsI);
+    	for(HospitalFloor floor: floorsI) {
+    		model.addRow(new Object[]{floor.getFloorNumber(), floor.getFloorNumber(), floor.getRoomCount()});
     	}
     	
     	JScrollPane scrollPane = new JScrollPane(floorTable);
@@ -1306,25 +1587,44 @@ public class MainFrame {
     	
 	}
 	
+	/**
+	 * Creates and presents a dialog for adding a new floor to the hospital's structure.
+	 * The dialog collects information such as the floor number and initializes the floor in the hospital system.
+	 * It also handles the logic for updating the floor list and saving the details if necessary, based on user interaction.
+	 *
+	 * @return JDialog that facilitates the process of adding a new floor to the hospital.
+	 */
 	private JDialog addNewFloorDialog() {
+		String floorNumber = String.valueOf(hospital.getfloorCount());
+		HospitalFloor newFloor = new HospitalFloor(floorNumber);
+		hospital.addFloor(newFloor);
+		if(isChecked) {
+			hospital.saveDetails();
+		}
+		
+		
+		DefaultTableModel model = (DefaultTableModel) floors.getModel();
+		model.addRow(new Object[]{newFloor.getFloorNumber(), newFloor.getFloorNumber(), newFloor.getRoomCount()});
+		
 		JDialog dialog = new JDialog(frame, "Add New Floor", true);
 		
 		JPanel form  = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.anchor = GridBagConstraints.WEST;
+		gbc.anchor = GridBagConstraints.CENTER;
 		
-		JPanel floorNumber = new JPanel();
-		floorNumber.add(new JLabel("Floor Number:"));
-		floorNumber.add(new JTextField(10));
+		JPanel notification = new JPanel();
+		notification.add(new JLabel("A new floor created"));
 		
-		JPanel NumberOfRooms = new JPanel();
-		NumberOfRooms.add(new JLabel("Number of Rooms:"));
-		NumberOfRooms.add(new JTextField(10));
+		JButton okButton = new JButton("OK");
+		okButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dialog.setVisible(false);
+			}
+		});
 		
-		form.add(floorNumber, gbc);
-		form.add(NumberOfRooms, gbc);
-		form.add(new JButton("submit"), gbc);
+		form.add(notification, gbc);
+		form.add(okButton, gbc);
         dialog.add(form);
         
         dialog.setSize(300, 200);
@@ -1335,30 +1635,13 @@ public class MainFrame {
         return dialog;
 	}
 	
-	private JDialog saveHospital() {
-		JDialog dialog = new JDialog(frame, "Save Hospital", true);
-		
-		JPanel form  = new JPanel(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.anchor = GridBagConstraints.WEST;
-		
-		JPanel filename1 = new JPanel();
-		filename1.add(new JLabel("Filename:"));
-		filename1.add(new JTextField(10));
-		
-		form.add(filename1, gbc);
-		form.add(new JButton("submit"), gbc);
-        dialog.add(form);
-        
-        dialog.setSize(300, 200);
-        dialog.setLocationRelativeTo(this.frame);
-        
-        dialog.setVisible(true);
-        
-        return dialog;
-	}
-    
+	/**
+	 * Constructs and returns a JPanel for the settings section of the application.
+	 * This panel includes various configuration options such as checkboxes for enabling or disabling features.
+	 * It also handles the layout and organization of these settings components, providing a user interface for system preferences.
+	 *
+	 * @return JPanel that serves as the container for the application's settings controls.
+	 */
 	private JPanel createSettingsPanel() {
 		JPanel settingPanel = new JPanel(new BorderLayout());
 		
@@ -1380,19 +1663,13 @@ public class MainFrame {
         JCheckBox checkbox = new JCheckBox("Save to backup file");
         checkbox.setBounds(50, 50, 200, 50);
         checkbox.setSelected(loadCheckboxState());
-        isFirstTime = loadIsFirstTime();
 
         // Add an ActionListener to the checkbox
         checkbox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Save the state of the checkbox to a file
                 saveCheckboxState(checkbox.isSelected());
-                saveIsFirstTime(isFirstTime);
                 
-                if (checkbox.isSelected() && isFirstTime) {
-                    saveHospital();
-                    isFirstTime = false;
-                }
             }
         });
         settingsPanel.add(checkbox, BorderLayout.NORTH);
@@ -1402,6 +1679,13 @@ public class MainFrame {
 		return settingPanel;
     }
 	
+	/**
+	 * Reads the saved state of a checkbox from a file and returns it as a boolean value.
+	 * It attempts to open the file "checkbox_state.txt", read the state, and interpret it as a boolean.
+	 * If the file does not exist or an error occurs during reading, it prints the stack trace and returns false by default.
+	 *
+	 * @return boolean representing the loaded state of the checkbox, or false if an error occurs.
+	 */
     public boolean loadCheckboxState() {
         try {
             BufferedReader reader = new BufferedReader(new FileReader("checkbox_state.txt"));
@@ -1415,7 +1699,14 @@ public class MainFrame {
 
         return false;
     }
-
+    
+    /**
+     * Saves the state of a checkbox to a file named "checkbox_state.txt".
+     * It writes the state as a string ("true" or "false") to the file, creating or overwriting it as needed.
+     * If an IOException occurs during the save operation, the stack trace is printed to the console.
+     *
+     * @param state The boolean state of the checkbox to be saved.
+     */
     public void saveCheckboxState(boolean state) {
         try {
             PrintWriter writer = new PrintWriter("checkbox_state.txt", "UTF-8");
@@ -1426,30 +1717,14 @@ public class MainFrame {
         }
     }
 	
-    public static boolean loadIsFirstTime() {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader("isfirsttime_state.txt"));
-            String state = reader.readLine();
-            reader.close();
-
-            return state.equals("true");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return true;
-    }
-
-    public static void saveIsFirstTime(boolean state) {
-        try {
-            PrintWriter writer = new PrintWriter("isfirsttime_state.txt", "UTF-8");
-            writer.println(state);
-            writer.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
+    /**
+     * Switches the currently displayed panel to a new panel within the main frame.
+     * It removes the current panel from the frame (if it's not null) and adds the new panel,
+     * then refreshes the frame to display the new panel. The activePanel field is updated to reference the new panel.
+     *
+     * @param currentPanel The currently displayed JPanel that needs to be removed.
+     * @param newPanel     The new JPanel to be displayed in the main frame.
+     */
     public void switchPanels(JPanel currentPanel, JPanel newPanel) {
     	if(currentPanel != null) {
     		frame.remove(currentPanel);
@@ -1461,6 +1736,12 @@ public class MainFrame {
     	this.activePanel = newPanel;
     }
     
+    /**
+     * Loads the hospital details from a file named "Hospital Management System.bak".
+     * If the file exists, it deserializes the Hospital object from the file and assigns it to the 'hospital' field.
+     * If any exceptions occur during the file reading or object deserialization process, they are caught and handled,
+     * with relevant error messages printed to the console.
+     */
     private void loadDetails() {
       this.hospital = null;
       File file = new File("Hospital Management System.bak");
@@ -1478,12 +1759,12 @@ public class MainFrame {
         	    e.printStackTrace();
         	  } catch (ClassNotFoundException e) {
         		// TODO Auto-generated catch block
-        	    System.out.println("User class not found");
+        	    System.out.println("Class not found");
         	    e.printStackTrace();
         	  }
       } else {
     	  System.out.println("File does not exist");
       }
     }
-
+    
 }
