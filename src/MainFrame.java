@@ -462,6 +462,7 @@ public class MainFrame {
 		
 		JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); 
 		JTextField searchText = new JTextField(10);
+		searchText.setToolTipText("Enter Staff Id");
 		JButton searchButton = new JButton("Search");
 		searchButton.addActionListener(new ActionListener() {
 			@Override
@@ -638,6 +639,7 @@ public class MainFrame {
 		
 		JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); 
 		JTextField searchText = new JTextField(10);
+		searchText.setToolTipText("Enter equipment name");
 		JButton searchButton = new JButton("Search");
 		searchButton.addActionListener(new ActionListener() {
 			@Override
@@ -686,7 +688,7 @@ public class MainFrame {
     }
 	
 	private JScrollPane equipmentTable() {
-    	String[] columnNames = {"ID", "Name", "Location"};
+    	String[] columnNames = {"ID", "Name", "Type", "Price"};
     	
     	DefaultTableModel model = new DefaultTableModel(columnNames, 0);
     	
@@ -694,10 +696,10 @@ public class MainFrame {
     	equipments = equipmentTable;
     	
     	ArrayList<HospitalEquipment> equipmentsI = new ArrayList<HospitalEquipment>();
-//    	equipmentsI.addAll(hospital != null ?  hospital.get() :equipmentsI);
+    	equipmentsI.addAll(hospital != null ?  hospital.getEquipments() :equipmentsI);
     	
-    	for(int i = 0; i < 100; i++) {
-    		model.addRow(new Object[]{i, "item " + i, 123});
+    	for(HospitalEquipment equipment : equipmentsI) {
+    		model.addRow(new Object[]{Integer.parseInt(equipment.getId()), equipment.getName(), equipment.getEquipmentType(), equipment.getPrice()});
     	}
     	
     	JScrollPane scrollPane = new JScrollPane(equipmentTable);
@@ -707,6 +709,8 @@ public class MainFrame {
 	
 	private JDialog addNewEquipmentDialog() {
 		JDialog dialog = new JDialog(frame, "Add New Staff", true);
+		JLabel info = new JLabel("");
+		info.setForeground(Color.RED);
 		
 		JPanel form  = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -714,16 +718,68 @@ public class MainFrame {
 		gbc.anchor = GridBagConstraints.WEST;
 		
 		JPanel equipmentName = new JPanel();
-		equipmentName.add(new JLabel("Item Name:"));
-		equipmentName.add(new JTextField(10));
+		equipmentName.add(new JLabel("Name:"));
+		JTextField equipmentNameField = new JTextField(10);
+		equipmentName.add(equipmentNameField);
 		
-		JPanel equipmentlocation = new JPanel();
-		equipmentlocation.add(new JLabel("Item Location:"));
-		equipmentlocation.add(new JTextField(10));
+		JPanel equipmentPrice = new JPanel();
+		equipmentPrice.add(new JLabel("Price:"));
+		JTextField equipmentPriceField =new JTextField(10);
+		equipmentPrice.add(equipmentPriceField);
+		
+		JPanel equipmenttype = new JPanel();
+		equipmenttype.add(new JLabel("Type:"));
+		JRadioButton radioButton1 = new JRadioButton("Surgical");
+		JRadioButton radioButton2 = new JRadioButton("Diagnotstic");
+		ArrayList<JRadioButton> buttons = new ArrayList<JRadioButton>();
+		buttons.add(radioButton1);
+		buttons.add(radioButton2);
+		ButtonGroup group = new ButtonGroup();
+		group.add(radioButton1);
+		group.add(radioButton2);
+		equipmenttype.add(radioButton1);
+		equipmenttype.add(radioButton2);
+		
+		JButton submit = new JButton("submit");
+		submit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String name = equipmentNameField.getText();
+				double price = Double.parseDouble(equipmentPriceField.getText());
+				HospitalEquipment newEquipment;
+				int id = hospital.getEquipmentCount();
+				
+				JRadioButton selectedButton = null;
+				for (JRadioButton button : buttons) {
+				    if (button.isSelected()) {
+				        selectedButton = button;
+				        break;
+				    }
+				}
+				if (selectedButton != null) {
+				    if(selectedButton.getText().equals(radioButton1.getText())) {
+				    	newEquipment = new SurgicalEquipment(String.valueOf(id), name, price);
+				    }
+				    else {
+				    	newEquipment = new DiagnosticEquipment(String.valueOf(id), name, price);
+				    }
+				} else {
+					newEquipment = new DiagnosticEquipment(String.valueOf(id), name, price);
+				}
+				hospital.addEquipment(newEquipment);
+				hospital.saveDetails();
+				
+				Object[] row = {Integer.parseInt(newEquipment.getId()), newEquipment.getName(), newEquipment.getEquipmentType(), newEquipment.getPrice()};
+				DefaultTableModel model = (DefaultTableModel) equipments.getModel();
+				model.addRow(row);
+				dialog.setVisible(false);
+			}
+		});
 		
 		form.add(equipmentName, gbc);
-		form.add(equipmentlocation, gbc);
-		form.add(new JButton("submit"), gbc);
+		form.add(equipmentPrice, gbc);
+		form.add(equipmenttype, gbc);
+		form.add(submit, gbc);
+		form.add(info, gbc);
         dialog.add(form);
         
         dialog.setSize(300, 200);

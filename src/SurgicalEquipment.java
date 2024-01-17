@@ -2,15 +2,15 @@
 public class SurgicalEquipment extends HospitalEquipment{
 	private String equipmentType;
 	
-	public SurgicalEquipment(String id, String name, String location) {
-		super(id, name, location);
-		this.equipmentType = "Surgical Equipment";
+	public SurgicalEquipment(String id, String name, double price) {
+		super(id, name, price);
+		this.equipmentType = "Surgical";
 	}
 
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return this.equipmentType + ", Name: "+this.getName()+", Location: "+this.getLocation();
+		return this.equipmentType + ", Name: "+this.getName()+", Location: "+this.getPrice();
 	}
 
 	@Override

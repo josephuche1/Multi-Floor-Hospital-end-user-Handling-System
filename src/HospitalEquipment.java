@@ -3,23 +3,23 @@ import java.io.Serializable;
 public abstract class HospitalEquipment implements Serializable{
 	private String id;
 	private String name;
-	private String location;
+	private double price;
 	
 	//constructors
 	public HospitalEquipment() {
 		this.id = "";
 		this.name="";
-		this.location="";
+		this.price = 0.0;
 	}
 	public HospitalEquipment(String id, String name) {
 		this.id = id;
 		this.name = name;
-		this.location  = "";
+		this.price = 0.0;
 	}
-	public HospitalEquipment(String id, String name, String location) {
+	public HospitalEquipment(String id, String name, double price) {
 		this.id = id;
 		this.name =name;
-		this.location  = location;
+		this.price = price;
 	}
 	
 	//public instance variables
@@ -29,11 +29,8 @@ public abstract class HospitalEquipment implements Serializable{
 	public String getName() {
 		return this.name;
 	}
-	public String getLocation() {
-		return this.location;
-	}
-	public void setLocation(String Location) {
-		this.location = location;
+	public double getPrice() {
+		return this.price;
 	}
 	
 	public abstract String getEquipmentType();

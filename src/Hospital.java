@@ -189,7 +189,7 @@ public class Hospital implements Serializable{
 	  return this.staff;
   }
   
-  public ArrayList<HospitalEquipment> getEquipment(){
+  public ArrayList<HospitalEquipment> getEquipments(){
 	  return this.equipments;
   }
   public ArrayList<Transaction> getTransactions(){
