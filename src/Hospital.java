@@ -251,10 +251,24 @@ public class Hospital implements Serializable{
 	  this.password = password;
   }
   
+  /**
+   * Records a new financial transaction in the hospital's financial accounts.
+   * The finances object is updated with the new transaction, reflecting changes in the hospital's financial status.
+   *
+   * @param transaction The Transaction object to be recorded in the hospital's financial ledger.
+   */
   public void addTransaction(Transaction transaction) {
 	  this.finances.addTransaction(transaction);
   }
   
+  /**
+   * Assigns a patient to an available room of type "General Ward".
+   * It searches through the list of rooms and assigns the patient to the first available room that matches the criteria.
+   * If no suitable room is available, it returns null.
+   *
+   * @param patient The Patient object to be assigned to a room.
+   * @return The HospitalRoom to which the patient was assigned, or null if no suitable room was available.
+   */
   public HospitalRoom assignPatient(Patient patient) {
 	  for(HospitalRoom room : this.rooms) {
 		  if(room.getAvailability() && room.getRoomType().equals("General Ward")) {
@@ -265,34 +279,74 @@ public class Hospital implements Serializable{
 	  return null;
   }
   
+  /**
+   * Retrieves the list of patients currently registered in the hospital.
+   *
+   * @return An ArrayList of Patient objects representing the hospital's patients.
+   */
   public ArrayList<Patient> getPatients(){
 	  return this.patients;
   }
   
+  /**
+   * Retrieves the list of rooms within the hospital.
+   *
+   * @return An ArrayList of HospitalRoom objects representing the hospital's rooms.
+   */
   public ArrayList<HospitalRoom> getRooms(){
 	  return this.rooms;
   }
   
+  /**
+   * Retrieves the list of floors in the hospital.
+   *
+   * @return An ArrayList of HospitalFloor objects representing the hospital's floors.
+   */
   public ArrayList<HospitalFloor> getFloors(){
 	  return this.floors;
   }
   
+  /**
+   * Retrieves the list of staff members working in the hospital.
+   *
+   * @return An ArrayList of HospitalStaff objects representing the hospital's staff.
+   */
   public ArrayList<HospitalStaff> getStaff(){
 	  return this.staff;
   }
   
+  /**
+   * Retrieves the list of equipment available in the hospital.
+   *
+   * @return An ArrayList of HospitalEquipment objects representing the hospital's equipment inventory.
+   */
   public ArrayList<HospitalEquipment> getEquipments(){
 	  return this.equipments;
   }
+  
+  /**
+   * Retrieves the list of financial transactions recorded in the hospital's accounts.
+   *
+   * @return An ArrayList of Transaction objects representing the financial transactions of the hospital.
+   */
   public ArrayList<Transaction> getTransactions(){
 	  return this.finances.getTransactions();
   }
   
+  /**
+   * Retrieves the list of medicines available in the hospital's pharmacy.
+   *
+   * @return An ArrayList of Medicine objects representing the stock of medicines.
+   */
   public ArrayList<Medicine> getMedicines(){
 	  return this.pharmacy.getMedicines();
   }
   
-  
+  /**
+   * Saves the current state of the hospital to a file.
+   * Serializes the Hospital object and writes it to "Hospital Management System.bak".
+   * If an IOException occurs during the save operation, the stack trace is printed.
+   */
   public void saveDetails() {
 	  try {
 		  FileOutputStream fileOut = new FileOutputStream("Hospital Management System.bak");
@@ -305,33 +359,76 @@ public class Hospital implements Serializable{
 	  }
   }
   
-
-  
+  /**
+   * Provides a string representation of the hospital's basic statistics.
+   * Includes the name of the hospital, staff population, number of rooms, and number of patients.
+   *
+   * @return A string summarizing the hospital's key information.
+   */
   @Override
   public String toString() {
 	  return "Name: " + this.name + ". \n Staff Population: " + this.staff.size()+". \n Number of rooms: " + this.rooms.size()+ "\n Number of patients: "+ this.patients.size();
   }
   
+  /**
+   * Retrieves the count of different medicines available in the hospital's pharmacy.
+   *
+   * @return The number of unique medicine types in the pharmacy's inventory.
+   */
   public int getMedicineCount() {
 	  return this.pharmacy.getCount();
   }
   
+  /**
+   * Retrieves the total number of financial transactions recorded in the hospital's financial accounts.
+   *
+   * @return The count of financial transactions.
+   */
   public int getTransactionCount() {
 	  return this.finances.getTransactionCount();
   }
   
+  /**
+   * Retrieves the current number of floors in the hospital.
+   *
+   * @return The total count of floors within the hospital.
+   */
   public int getfloorCount() {
 	  return this.floorCount;
   }
+  
+  /**
+   * Retrieves the current number of rooms in the hospital.
+   *
+   * @return The total count of rooms within the hospital.
+   */
   public int getRoomCount() {
 	  return this.roomCount;
   }
+  
+  /**
+   * Retrieves the current number of pieces of equipment in the hospital.
+   *
+   * @return The total count of equipment items within the hospital.
+   */
   public int getEquipmentCount() {
 	  return this.equipmentCount;
   }
+  
+  /**
+   * Retrieves the current number of patients registered in the hospital.
+   *
+   * @return The total count of patients within the hospital.
+   */
   public int getPatientCount() {
 	  return this.patientsCount;
   }
+  
+  /**
+   * Retrieves the current number of staff members employed in the hospital.
+   *
+   * @return The total count of staff within the hospital.
+   */
   public int getStaffCount() {
 	  return this.staffCount;
   }
