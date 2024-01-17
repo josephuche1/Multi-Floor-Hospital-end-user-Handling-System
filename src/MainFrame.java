@@ -45,6 +45,7 @@ public class MainFrame {
 	private JTable rooms;
 	private JTable staff;
 	private JTable equipments;
+	private JTable medicines;
 	
 	public MainFrame() {
 		initialize();
@@ -1014,7 +1015,30 @@ public class MainFrame {
 		
 		JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); 
 		JTextField searchText = new JTextField(10);
+		searchText.setToolTipText("Enter the name of medicine");
 		JButton searchButton = new JButton("Search");
+		searchButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String text = searchText.getText();
+				int id = 0;
+				try {
+				    id = Integer.parseInt(text);
+				} catch (NumberFormatException i) {
+				    System.out.println(text + " cannot be parsed to an int");
+				}
+				DefaultTableModel model = (DefaultTableModel) medicines.getModel();
+				int columnIndex = 0;
+				
+				for (int i = 0; i < model.getRowCount(); i++) {
+				    if (model.getValueAt(i, columnIndex).equals(id)) {
+				    	medicines.setRowSelectionInterval(i, i);
+				    	medicines.scrollRectToVisible(medicines.getCellRect(i, 0, true));
+				        break;
+				    }
+				}
+			}
+		});
 		searchPanel.add(searchText);
 		searchPanel.add(searchButton);
 		
@@ -1050,9 +1074,13 @@ public class MainFrame {
     	DefaultTableModel model = new DefaultTableModel(columnNames, 0);
     	
     	JTable medicineTable = new JTable(model);
+    	medicines = medicineTable;
     	
-    	for(int i = 0; i < 100; i++) {
-    		model.addRow(new Object[]{i, "medicine " + i, "dexcribe it", 1000});
+    	ArrayList<Medicine> medicineI = new ArrayList<Medicine>();
+    	medicineI.addAll(hospital != null ?  hospital.getMedicines() : medicineI);
+    	
+    	for(Medicine medicine : medicineI) {
+    		model.addRow(new Object[]{Integer.parseInt(medicine.getId()), medicine.getName(), medicine.getDescription(), medicine.getPrice()});
     	}
     	
     	JScrollPane scrollPane = new JScrollPane(medicineTable);
@@ -1062,6 +1090,8 @@ public class MainFrame {
 	
 	private JDialog addNewMedicineDialog() {
 		JDialog dialog = new JDialog(frame, "Add New Medicine", true);
+		JLabel info = new JLabel("");
+		info.setForeground(Color.RED);
 		
 		JPanel form  = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -1070,22 +1100,46 @@ public class MainFrame {
 		
 		JPanel MedicineName = new JPanel();
 		MedicineName.add(new JLabel("Medicine Name:"));
-		MedicineName.add(new JTextField(10));
+		JTextField MedicineNameField = new JTextField(10);
+		MedicineName.add(MedicineNameField);
 		
 		JPanel price = new JPanel();
 		price.add(new JLabel("Price:"));
-		price.add(new JTextField(10));
+		JTextField priceField = new JTextField(10);
+		price.add(priceField);
 		
 		
 		JPanel description = new JPanel();
 		description.add(new JLabel("Description"));
-		description.add(new JScrollPane(new JTextArea(5, 20)));
+		JTextArea descriptionArea = new JTextArea(5, 20);
+		description.add(new JScrollPane(descriptionArea));
+		
+		JButton submit = new JButton("Submit");
+		submit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String name = MedicineNameField.getText();
+				double price = Double.parseDouble(priceField.getText());
+				String description = descriptionArea.getText();
+				String id = String.valueOf(hospital.getMedicineCount());
+				
+				Medicine medicine = new Medicine(id, name, description, price);
+				hospital.addMedicine(medicine);
+				hospital.saveDetails();
+				
+				DefaultTableModel model = (DefaultTableModel) medicines.getModel();
+				Object[] row = {Integer.parseInt(medicine.getId()), medicine.getName(), medicine.getDescription(), medicine.getPrice()};
+				model.addRow(row);
+				dialog.setVisible(false);
+				
+			}
+		});
 		
 		
 		form.add(MedicineName, gbc);
 		form.add(price, gbc);
 		form.add(description, gbc);
-		form.add(new JButton("submit"), gbc);
+		form.add(submit, gbc);
+		form.add(info, gbc);
         dialog.add(form);
         
         dialog.setSize(500, 400);
